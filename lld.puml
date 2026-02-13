@@ -1,0 +1,95 @@
+@startuml
+skinparam componentStyle rectangle
+skinparam shadowing false
+skinparam packageStyle rectangle
+skinparam linetype ortho
+
+actor User
+
+package "Frontend Layer" {
+  component "React Native App\n(Redux + Atomic Design)"
+}
+
+package "Edge Layer (AWS)" {
+  component "Route53"
+  component "CloudFront CDN"
+  component "API Gateway"
+  component "AWS WAF"
+}
+
+package "Application Layer (VPC)" {
+
+  package "Public Subnet" {
+    component "Application Load Balancer"
+  }
+
+  package "Private Subnet" {
+
+    package "ECS / EC2 Cluster" {
+
+      component "Express App"
+
+      package "API Layer" {
+        component "Auth Middleware (JWT)"
+        component "Validation Middleware"
+        component "PromotionController"
+      }
+
+      package "Business Layer" {
+        component "PromotionService"
+      }
+
+      package "Data Layer" {
+        component "PromotionRepository"
+      }
+
+      component "Redis Cache\n(ElastiCache)"
+      component "MySQL Database\n(Amazon RDS)"
+    }
+
+  }
+}
+
+package "Observability" {
+  component "CloudWatch Logs"
+  component "CloudWatch Metrics"
+}
+
+package "Security" {
+  component "IAM Roles"
+  component "Secrets Manager"
+}
+
+' ================= FLOW ===================
+
+User --> "React Native App\n(Redux + Atomic Design)"
+
+"React Native App\n(Redux + Atomic Design)" --> Route53
+Route53 --> "CloudFront CDN"
+"CloudFront CDN" --> "AWS WAF"
+"AWS WAF" --> "API Gateway"
+"API Gateway" --> "Application Load Balancer"
+"Application Load Balancer" --> "Express App"
+
+' Internal App Flow
+
+"Express App" --> "Auth Middleware (JWT)"
+"Auth Middleware (JWT)" --> "Validation Middleware"
+"Validation Middleware" --> "PromotionController"
+"PromotionController" --> "PromotionService"
+
+"PromotionService" --> "Redis Cache\n(ElastiCache)"
+"PromotionService" --> "PromotionRepository"
+"PromotionRepository" --> "MySQL Database\n(Amazon RDS)"
+
+' Logging & Monitoring
+
+"Express App" --> "CloudWatch Logs"
+"Express App" --> "CloudWatch Metrics"
+
+' Security
+
+"Express App" --> "IAM Roles"
+"Express App" --> "Secrets Manager"
+
+@enduml

@@ -1,0 +1,178 @@
+{
+  "info": {
+    "name": "PROMOTIONS SYSTEM – FULL TEST SUITE",
+    "_postman_id": "9c3d6c10-1111-4444-8888-promotions-suite",
+    "description": "Complete test cases for Promotions Management Backend",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1️⃣ Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:5000/",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": [""]
+        }
+      }
+    },
+    {
+      "name": "2️⃣ Create Promotion - Valid",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"promo_code\": \"NEWYEAR10\",\n  \"title\": \"New Year Offer\",\n  \"type\": \"PERCENTAGE\",\n  \"value\": 10,\n  \"start_at\": \"2026-01-01T00:00:00.000Z\",\n  \"end_at\": \"2026-12-31T23:59:59.000Z\",\n  \"status\": \"ACTIVE\",\n  \"usage_limit\": 5,\n  \"usage_count\": 0\n}"
+        },
+        "url": {
+          "raw": "http://localhost:5000/promotions",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["promotions"]
+        }
+      }
+    },
+    {
+      "name": "3️⃣ Create Promotion - Invalid Type",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"promo_code\": \"INVALID1\",\n  \"title\": \"Invalid Promo\",\n  \"type\": \"WRONG\",\n  \"value\": 10,\n  \"start_at\": \"2026-01-01T00:00:00.000Z\",\n  \"end_at\": \"2026-12-31T23:59:59.000Z\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:5000/promotions",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["promotions"]
+        }
+      }
+    },
+    {
+      "name": "4️⃣ Get All Promotions",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:5000/promotions",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["promotions"]
+        }
+      }
+    },
+    {
+      "name": "5️⃣ Validate Promo - Success",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"promo_code\": \"NEWYEAR10\",\n  \"order_amount\": 1000\n}"
+        },
+        "url": {
+          "raw": "http://localhost:5000/promotions/validate",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["promotions", "validate"]
+        }
+      }
+    },
+    {
+      "name": "6️⃣ Validate Promo - Invalid Code",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"promo_code\": \"NOTEXIST\",\n  \"order_amount\": 1000\n}"
+        },
+        "url": {
+          "raw": "http://localhost:5000/promotions/validate",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["promotions", "validate"]
+        }
+      }
+    },
+    {
+      "name": "7️⃣ Validate Promo - Usage Limit Exceeded",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"promo_code\": \"LIMIT1\",\n  \"order_amount\": 1000\n}"
+        },
+        "url": {
+          "raw": "http://localhost:5000/promotions/validate",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["promotions", "validate"]
+        }
+      }
+    },
+    {
+      "name": "8️⃣ Create Expired Promotion",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"promo_code\": \"OLD10\",\n  \"title\": \"Old Offer\",\n  \"type\": \"PERCENTAGE\",\n  \"value\": 10,\n  \"start_at\": \"2024-01-01T00:00:00.000Z\",\n  \"end_at\": \"2024-12-31T23:59:59.000Z\",\n  \"status\": \"ACTIVE\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:5000/promotions",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["promotions"]
+        }
+      }
+    },
+    {
+      "name": "9️⃣ Validate Expired Promo",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"promo_code\": \"OLD10\",\n  \"order_amount\": 1000\n}"
+        },
+        "url": {
+          "raw": "http://localhost:5000/promotions/validate",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["promotions", "validate"]
+        }
+      }
+    }
+  ]
+}
