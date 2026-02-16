@@ -1,20 +1,27 @@
 import { queryWithTimeout } from "../../config/db";
-import { Promotion } from "../../types/promotions.types";
+import { Promotion, CustomItemDiscount, ComboDiscount } from "../../types/promotions.types";
 
 export const createPromotionRepo = async (data: Promotion) => {
+  // For CUSTOM type, store custom_items and combos as JSON
+  const customItemsJson = data.type === "CUSTOM" ? JSON.stringify({
+    items: data.custom_items || [],
+    combos: data.combos || []
+  }) : null;
+
   const [result]: any = await queryWithTimeout(
     `INSERT INTO promotions 
-    (promo_code, title, type, value, start_at, end_at, status, usage_limit, usage_count)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0)`,
+    (promo_code, title, type, value, start_at, end_at, status, usage_limit, usage_count, custom_items)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, ?)`,
     [
       data.promo_code,
       data.title,
       data.type,
-      data.value,
+      data.type === "CUSTOM" ? 0 : data.value, // value is 0 for CUSTOM type
       data.start_at,
       data.end_at,
       data.status || "ACTIVE",
       data.usage_limit ?? null,
+      customItemsJson,
     ]
   );
 
@@ -26,7 +33,21 @@ export const getPromotionByIdRepo = async (id: number) => {
     "SELECT * FROM promotions WHERE id = ?",
     [id]
   );
-  return rows[0];
+  const promo = rows[0];
+  
+  // Parse custom_items JSON for CUSTOM type promotions
+  if (promo && promo.custom_items) {
+    try {
+      const parsed = JSON.parse(promo.custom_items);
+      promo.custom_items = parsed.items || [];
+      promo.combos = parsed.combos || [];
+    } catch (e) {
+      promo.custom_items = [];
+      promo.combos = [];
+    }
+  }
+  
+  return promo;
 };
 
 export const getPromotionByCodeRepo = async (code: string) => {
@@ -34,7 +55,21 @@ export const getPromotionByCodeRepo = async (code: string) => {
     "SELECT * FROM promotions WHERE promo_code = ?",
     [code]
   );
-  return rows[0];
+  const promo = rows[0];
+  
+  // Parse custom_items JSON for CUSTOM type promotions
+  if (promo && promo.custom_items) {
+    try {
+      const parsed = JSON.parse(promo.custom_items);
+      promo.custom_items = parsed.items || [];
+      promo.combos = parsed.combos || [];
+    } catch (e) {
+      promo.custom_items = [];
+      promo.combos = [];
+    }
+  }
+  
+  return promo;
 };
 
 export const updatePromotionRepo = async (id: number, data: Partial<Promotion>) => {
@@ -49,6 +84,34 @@ export const updatePromotionRepo = async (id: number, data: Partial<Promotion>) 
   if (data.end_at !== undefined) { fields.push("end_at = ?"); values.push(data.end_at); }
   if (data.status !== undefined) { fields.push("status = ?"); values.push(data.status); }
   if (data.usage_limit !== undefined) { fields.push("usage_limit = ?"); values.push(data.usage_limit); }
+  
+  // Handle custom_items for CUSTOM type
+  if (data.custom_items !== undefined || data.combos !== undefined) {
+    const existing = await getPromotionByIdRepo(id);
+    
+    // Parse existing custom_items - it may be already parsed (array) or a JSON string
+    let existingParsed = { items: [], combos: [] };
+    if (existing?.custom_items) {
+      if (typeof existing.custom_items === 'string') {
+        try {
+          existingParsed = existing.custom_items ? JSON.parse(existing.custom_items) : { items: [], combos: [] };
+        } catch (e) {
+          existingParsed = { items: [], combos: [] };
+        }
+      } else if (Array.isArray(existing.custom_items)) {
+        // Already parsed - it's the items array
+        existingParsed = { items: existing.custom_items, combos: existing.combos || [] };
+      }
+    }
+    
+    const customItemsJson = JSON.stringify({
+      items: data.custom_items !== undefined ? data.custom_items : existingParsed.items,
+      combos: data.combos !== undefined ? data.combos : existingParsed.combos
+    });
+    
+    fields.push("custom_items = ?");
+    values.push(customItemsJson);
+  }
 
   if (fields.length === 0) {
     console.log("[REPO] No fields to update, returning existing data");

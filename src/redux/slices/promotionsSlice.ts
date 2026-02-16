@@ -1,17 +1,32 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { api } from "../../utils/api";
 
+export interface CustomItemDiscount {
+  item_id: string;
+  discount_type: "PERCENTAGE" | "FIXED";
+  discount_value: number;
+}
+
+export interface ComboDiscount {
+  item_ids: string[];
+  discount_type: "PERCENTAGE" | "FIXED";
+  discount_value: number;
+}
+
 export interface Promotion {
   id?: number;
   promo_code: string;
   title: string;
-  type: "PERCENTAGE" | "FIXED";
+  type: "PERCENTAGE" | "FIXED" | "CUSTOM";
   value: number;
   start_at: string;
   end_at: string;
   status?: "ACTIVE" | "INACTIVE";
   usage_limit?: number;
   usage_count?: number;
+  // Custom promotion fields
+  custom_items?: CustomItemDiscount[];
+  combos?: ComboDiscount[];
 }
 
 interface PromotionsState {

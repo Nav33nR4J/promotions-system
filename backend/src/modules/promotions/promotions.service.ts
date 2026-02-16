@@ -12,7 +12,7 @@ import {
 } from "./promotions.repository";
 
 import { validateCreatePromotion, validateUpdatePromotion, validateId } from "../../validations/promotions.validation";
-import { Promotion, ValidatePromoInput } from "../../types/promotions.types";
+import { Promotion, ValidatePromoInput, CustomItemDiscount, ComboDiscount } from "../../types/promotions.types";
 
 export const createPromotionService = async (data: Promotion) => {
   validateCreatePromotion(data);
@@ -72,6 +72,50 @@ export const deletePromotionService = async (id: number) => {
   return { success: true, message: "Promotion deleted successfully" };
 };
 
+/**
+ * Calculate discount for CUSTOM type promotion
+ * @param orderedItems - Array of item IDs that the customer ordered
+ * @param customItems - Individual item discounts configured in the promotion
+ * @param combos - Combo discounts configured in the promotion
+ * @returns Object with item discounts and combo discounts applied
+ */
+export const calculateCustomDiscount = (
+  orderedItems: string[],
+  customItems: CustomItemDiscount[],
+  combos: ComboDiscount[]
+): { itemDiscounts: { item_id: string; discount: number }[]; comboDiscounts: { combo: ComboDiscount; discount: number }[] } => {
+  const itemDiscounts: { item_id: string; discount: number }[] = [];
+  const comboDiscounts: { combo: ComboDiscount; discount: number }[] = [];
+  
+  // Calculate individual item discounts
+  orderedItems.forEach((orderedItemId) => {
+    const customItem = customItems.find(ci => ci.item_id === orderedItemId);
+    if (customItem) {
+      // We need the item price to calculate discount - for now return the discount value
+      // In real implementation, you'd get the item price from menu
+      if (customItem.discount_type === "FIXED") {
+        itemDiscounts.push({ item_id: orderedItemId, discount: customItem.discount_value });
+      } else {
+        // For percentage, we'll return the percentage value - actual calculation needs item price
+        itemDiscounts.push({ item_id: orderedItemId, discount: customItem.discount_value });
+      }
+    }
+  });
+  
+  // Calculate combo discounts
+  // A combo applies if all items in the combo are ordered
+  combos.forEach((combo) => {
+    const comboItems = combo.item_ids;
+    const hasAllComboItems = comboItems.every(ci => orderedItems.includes(ci));
+    
+    if (hasAllComboItems) {
+      comboDiscounts.push({ combo, discount: combo.discount_value });
+    }
+  });
+  
+  return { itemDiscounts, comboDiscounts };
+};
+
 export const validatePromotionService = async (
   data: ValidatePromoInput
 ) => {
@@ -92,7 +136,12 @@ export const validatePromotionService = async (
 
   let discount = 0;
 
-  if (promo.type === "PERCENTAGE") {
+  if (promo.type === "CUSTOM") {
+    // For CUSTOM type, we need ordered items to calculate discount
+    // This is a placeholder - in real implementation, you'd pass ordered items
+    // For now, return a message that custom items are needed
+    throw new ApiError("CUSTOM promotions require item details. Please provide ordered items.", 400);
+  } else if (promo.type === "PERCENTAGE") {
     discount = (order_amount * promo.value) / 100;
   } else {
     discount = promo.value;

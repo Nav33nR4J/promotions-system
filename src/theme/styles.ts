@@ -327,6 +327,16 @@ const componentStylesRaw = {
       shadowRadius: 16,
       elevation: 8,
     },
+    inner: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    text: {
+      color: "#fff",
+      fontWeight: "bold",
+      fontSize: 16,
+    },
   },
 
   // --- Input ---
@@ -552,6 +562,121 @@ const componentStylesRaw = {
     dateButtonText: {
       fontSize: 16,
     },
+    // Custom type styles
+    menuItemRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingVertical: 10,
+      paddingHorizontal: 8,
+      borderRadius: 8,
+      marginBottom: 8,
+    },
+    menuItemCheckbox: {
+      marginRight: 12,
+    },
+    menuItemInfo: {
+      flex: 1,
+    },
+    menuItemName: {
+      fontSize: 14,
+      fontWeight: "600",
+    },
+    menuItemPrice: {
+      fontSize: 12,
+    },
+    categoryTitle: {
+      fontSize: 16,
+      fontWeight: "bold",
+      marginTop: 16,
+      marginBottom: 8,
+    },
+    selectedItemContainer: {
+      borderRadius: 8,
+      padding: 12,
+      marginBottom: 8,
+    },
+    selectedItemHeader: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      marginBottom: 8,
+    },
+    selectedItemName: {
+      fontSize: 14,
+      fontWeight: "600",
+    },
+    selectedItemDiscount: {
+      flexDirection: "row",
+      alignItems: "center",
+    },
+    discountTypeButton: {
+      paddingHorizontal: 12,
+      paddingVertical: 6,
+      borderRadius: 4,
+      marginRight: 8,
+    },
+    discountTypeButtonActive: {},
+    discountTypeText: {
+      fontSize: 12,
+    },
+    discountInput: {
+      flex: 1,
+      height: 36,
+      borderRadius: 4,
+      paddingHorizontal: 8,
+    },
+    comboContainer: {
+      borderRadius: 8,
+      padding: 12,
+      marginBottom: 8,
+    },
+    comboHeader: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      marginBottom: 8,
+    },
+    comboItems: {
+      fontSize: 12,
+      marginBottom: 4,
+    },
+    comboDiscount: {
+      fontSize: 14,
+      fontWeight: "600",
+    },
+    comboRemoveButton: {
+      padding: 4,
+    },
+    comboRemoveText: {
+      color: "red",
+      fontSize: 14,
+    },
+    addComboButton: {
+      padding: 12,
+      borderRadius: 8,
+      borderWidth: 1,
+      borderStyle: "dashed",
+      alignItems: "center",
+      marginBottom: 16,
+    },
+    addComboText: {
+      fontWeight: "600",
+    },
+    comboItemRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      paddingVertical: 8,
+    },
+    comboItemText: {
+      fontSize: 14,
+      marginLeft: 8,
+    },
+    sectionTitle: {
+      fontSize: 16,
+      fontWeight: "bold",
+      marginBottom: 12,
+      marginTop: 8,
+    },
   },
 
   // --- PromotionList ---
@@ -622,13 +747,22 @@ const componentStylesRaw = {
   // --- ToggleSwitch ---
   toggleSwitch: {
     container: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
+      width: 52,
+      height: 30,
+      borderRadius: 15,
+      padding: 2,
+      justifyContent: "center",
     },
-    label: {
-      fontSize: 16,
-      fontWeight: "500",
+    thumb: {
+      width: 26,
+      height: 26,
+      borderRadius: 13,
+      backgroundColor: "#FFFFFF",
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.25,
+      shadowRadius: 3.5,
+      elevation: 4,
     },
   },
 };
@@ -811,6 +945,98 @@ export const getPromotionCardThemeStyles = (
     },
     deleteButtonText: {
       color: "#FFFFFF",
+    },
+  };
+};
+
+export const getPromotionFormThemeStyles = (theme: Theme) => {
+  return {
+    label: {
+      color: theme.text,
+    },
+    typeButton: {
+      backgroundColor: theme.card,
+      borderColor: theme.text + "30",
+    },
+    typeButtonText: {
+      color: theme.text,
+    },
+    dateButton: {
+      backgroundColor: theme.card,
+      borderColor: theme.text + "30",
+    },
+    dateButtonText: {
+      color: theme.text,
+    },
+    modalContainer: {
+      backgroundColor: "rgba(0,0,0,0.5)",
+    },
+    modalContent: {
+      backgroundColor: theme.background,
+    },
+    modalTitle: {
+      color: theme.text,
+    },
+    modalOption: {
+      borderBottomColor: theme.text + "20",
+    },
+    modalOptionText: {
+      color: theme.text,
+    },
+    modalCancelText: {
+      color: theme.primary,
+    },
+    menuItemRow: {
+      backgroundColor: theme.card,
+    },
+    menuItemName: {
+      color: theme.text,
+    },
+    menuItemPrice: {
+      color: theme.text + "80",
+    },
+    categoryTitle: {
+      color: theme.primary,
+    },
+    selectedItemContainer: {
+      backgroundColor: theme.card,
+    },
+    selectedItemName: {
+      color: theme.text,
+    },
+    discountTypeButton: {
+      backgroundColor: theme.text + "10",
+    },
+    discountTypeButtonActive: {
+      backgroundColor: theme.primary,
+    },
+    discountTypeText: {
+      color: theme.text,
+    },
+    discountInput: {
+      backgroundColor: theme.background,
+      color: theme.text,
+    },
+    comboContainer: {
+      backgroundColor: theme.card,
+    },
+    comboItems: {
+      color: theme.text + "80",
+    },
+    comboDiscount: {
+      color: theme.primary,
+    },
+    addComboButton: {
+      borderColor: theme.primary,
+    },
+    addComboText: {
+      color: theme.primary,
+    },
+    comboItemText: {
+      color: theme.text,
+    },
+    sectionTitle: {
+      color: theme.text,
     },
   };
 };

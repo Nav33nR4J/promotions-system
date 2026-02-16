@@ -44,21 +44,23 @@ export const HomeScreen = ({ navigation }: any) => {
     setValidationStatus("LOADING");
 
     try {
-      const response = await api.post("/promotions/validate", {
+      await api.post("/promotions/validate", {
         promo_code: validateCode.trim().toUpperCase(),
         order_amount: 100,
       });
       
-      if (response.data.success) {
-        setValidationStatus("ENABLED");
-      }
+      // If no error was thrown, validation was successful
+      setValidationStatus("ENABLED");
     } catch (error: any) {
+      console.log("Validation error caught:", error);
       const status = error.response?.status;
       const message = error.response?.data?.message || error.message;
       
+      console.log("Error status:", status, "message:", message);
+      
       if (status === 404) {
         setValidationStatus("INVALID");
-      } else if (message === "Promotion inactive" || message === "Promotion expired or not started" || message === "Promotion usage limit exceeded") {
+      } else if (message && (message.includes("inactive") || message.includes("expired") || message.includes("not started") || message.includes("usage limit"))) {
         setValidationStatus("DISABLED");
       } else {
         setValidationStatus("INVALID");
