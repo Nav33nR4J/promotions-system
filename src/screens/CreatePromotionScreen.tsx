@@ -5,6 +5,7 @@ import { PromotionForm } from "../components/organisms/PromotionForm";
 import { Text } from "../components/atoms/Text";
 import { Promotion } from "../redux/slices/promotionsSlice";
 import { useTheme } from "../theme/ThemeProvider";
+import { appStyles } from "../theme/styles";
 
 interface CreatePromotionScreenProps {
   navigation: any;
@@ -16,7 +17,7 @@ interface CreatePromotionScreenProps {
 }
 
 export const CreatePromotionScreen = ({ navigation, route }: CreatePromotionScreenProps) => {
-  const { isDark } = useTheme();
+  const { isDark, theme } = useTheme();
   const editingPromotion = route.params?.promotion;
   const isEditing = !!editingPromotion;
 
@@ -29,30 +30,30 @@ export const CreatePromotionScreen = ({ navigation, route }: CreatePromotionScre
   }, [navigation]);
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: isDark ? "#121212" : "#FFFFFF" }]}>
+    <SafeAreaView style={[appStyles.createPromotionScreen.container, { backgroundColor: isDark ? theme.background : "#FFFFFF" }]}>
       <StatusBar barStyle={isDark ? "light-content" : "dark-content"} />
       
       {/* Header */}
       <LinearGradient
-        colors={["#FF6B6B", "#FF3B30"]}
+        colors={[theme.gradientStart, theme.gradientEnd]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 0 }}
-        style={styles.headerGradient}
+        style={appStyles.createPromotionScreen.headerGradient}
       >
-        <View style={styles.headerContent}>
-          <TouchableOpacity onPress={handleBack} style={styles.backButton}>
-            <Text style={styles.backButtonText}>←</Text>
+        <View style={appStyles.createPromotionScreen.headerContent}>
+          <TouchableOpacity onPress={handleBack} style={appStyles.createPromotionScreen.backButton}>
+            <Text style={appStyles.createPromotionScreen.backButtonText}>←</Text>
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>
+          <Text style={appStyles.createPromotionScreen.headerTitle}>
             {isEditing ? "Edit Promotion" : "Create Promotion"}
           </Text>
-          <View style={styles.placeholder} />
+          <View style={appStyles.createPromotionScreen.placeholder} />
         </View>
       </LinearGradient>
 
       {/* Form */}
       <ScrollView 
-        contentContainerStyle={styles.scrollContent}
+        contentContainerStyle={appStyles.createPromotionScreen.scrollContent}
         showsVerticalScrollIndicator={false}
       >
         <PromotionForm 
@@ -63,46 +64,3 @@ export const CreatePromotionScreen = ({ navigation, route }: CreatePromotionScre
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  headerGradient: {
-    paddingHorizontal: 16,
-    paddingTop: 12,
-    paddingBottom: 20,
-    borderBottomLeftRadius: 24,
-    borderBottomRightRadius: 24,
-  },
-  headerContent: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: "rgba(255,255,255,0.2)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  backButtonText: {
-    fontSize: 24,
-    color: "#FFFFFF",
-    fontWeight: "600",
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: "700",
-    color: "#FFFFFF",
-  },
-  placeholder: {
-    width: 40,
-  },
-  scrollContent: {
-    padding: 16,
-    paddingBottom: 40,
-  },
-});

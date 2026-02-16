@@ -1,7 +1,20 @@
-import { StyleSheet } from "react-native";
+/**
+ * Consolidated Styles for Restaurant Management App
+ * 
+ * All styles are organized by namespace:
+ * - shared: Common reusable styles used across components
+ * - components: Component-specific styles
+ * - app: Page-specific styles
+ */
 
-// Centralized styles using StyleSheet.flatten pattern for reusability
-export const styles = StyleSheet.create({
+import { StyleSheet } from 'react-native';
+import { Theme } from "./colors";
+
+// =============================================================================
+// SHARED STYLES - Common reusable styles
+// =============================================================================
+
+export const sharedStyles = StyleSheet.create({
   // Container styles
   container: {
     flex: 1,
@@ -176,7 +189,7 @@ export const styles = StyleSheet.create({
     backgroundColor: "#2196F3",
   },
   badgeExpired: {
-    backgroundColor: "#F44336",
+    backgroundColor: "#7C3AED",
   },
 
   // Toggle/Switch container
@@ -283,16 +296,531 @@ export const styles = StyleSheet.create({
   },
 });
 
-// Utility to flatten and merge styles
-export const flattenStyles = (...stylesArray: any[]) => {
-  return StyleSheet.flatten(stylesArray.filter(Boolean));
+// =============================================================================
+// COMPONENT STYLES - Component-specific styles
+// =============================================================================
+
+// Using type assertion to allow nested style objects that TypeScript
+// would normally reject for StyleSheet.create()
+const componentStylesRaw = {
+  // --- Button ---
+  button: {
+    container: {
+      height: 52,
+      borderRadius: 12,
+      marginVertical: 8,
+      overflow: "hidden",
+    },
+    themeToggle: {
+      width: 44,
+      height: 44,
+      borderRadius: 22,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    createButton: {
+      height: 56,
+      borderRadius: 16,
+      shadowColor: "#7C3AED",
+      shadowOffset: { width: 0, height: 8 },
+      shadowOpacity: 0.3,
+      shadowRadius: 16,
+      elevation: 8,
+    },
+  },
+
+  // --- Input ---
+  input: {
+    container: {
+      padding: 12,
+      borderRadius: 10,
+      marginVertical: 6,
+    },
+  },
+
+  // --- PromotionCard ---
+  promotionCard: {
+    cardContainer: {
+      marginHorizontal: 16,
+      marginVertical: 6,
+      borderRadius: 14,
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.08,
+      shadowRadius: 8,
+      elevation: 4,
+      backgroundColor: "#fff",
+    },
+    gradient: {
+      borderRadius: 14,
+      overflow: "hidden",
+    },
+    cardContent: {
+      flexDirection: "row",
+      padding: 16,
+      minHeight: 130,
+    },
+
+    // Left Section
+    leftSection: {
+      flex: 1.2,
+      justifyContent: "space-between",
+      paddingRight: 16,
+    },
+    header: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      marginBottom: 8,
+    },
+    promoCodeBadge: {
+      backgroundColor: "rgba(255, 255, 255, 0.25)",
+      paddingHorizontal: 10,
+      paddingVertical: 4,
+      borderRadius: 6,
+      borderWidth: 1,
+      borderColor: "rgba(255, 255, 255, 0.3)",
+    },
+    promoCode: {
+      fontSize: 12,
+      fontWeight: "700",
+      color: "#fff",
+      letterSpacing: 1,
+    },
+    title: {
+      fontSize: 16,
+      fontWeight: "600",
+      color: "#fff",
+      marginBottom: 8,
+      lineHeight: 22,
+    },
+    discountRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 8,
+    },
+    discountValue: {
+      fontSize: 28,
+      fontWeight: "700",
+      color: "#fff",
+      letterSpacing: -0.5,
+    },
+    typeBadge: {
+      backgroundColor: "rgba(255, 255, 255, 0.2)",
+      paddingHorizontal: 8,
+      paddingVertical: 3,
+      borderRadius: 5,
+    },
+    typeText: {
+      fontSize: 10,
+      fontWeight: "600",
+      color: "#fff",
+    },
+
+    // Divider
+    verticalDivider: {
+      width: 1,
+      backgroundColor: "rgba(255, 255, 255, 0.25)",
+      marginHorizontal: 0,
+    },
+
+    // Right Section
+    rightSection: {
+      flex: 1,
+      paddingLeft: 16,
+      justifyContent: "space-between",
+    },
+    datesContainer: {
+      gap: 12,
+    },
+    dateItem: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+    },
+    dateLabel: {
+      fontSize: 11,
+      fontWeight: "500",
+      color: "rgba(255, 255, 255, 0.7)",
+      textTransform: "uppercase",
+      letterSpacing: 0.5,
+    },
+    dateValue: {
+      fontSize: 13,
+      fontWeight: "600",
+      color: "#fff",
+    },
+
+    // Action Section
+    actionSection: {
+      flexDirection: "row",
+      gap: 8,
+      marginTop: 12,
+    },
+    actionButton: {
+      flex: 1,
+      paddingVertical: 8,
+      borderRadius: 8,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    editButton: {
+      backgroundColor: "rgba(255, 255, 255, 0.95)",
+    },
+    editButtonText: {
+      fontSize: 13,
+      fontWeight: "600",
+      color: "#333",
+    },
+    deleteButton: {
+      backgroundColor: "rgba(255, 255, 255, 0.2)",
+      borderWidth: 1,
+      borderColor: "rgba(255, 255, 255, 0.4)",
+    },
+    deleteButtonText: {
+      fontSize: 13,
+      fontWeight: "600",
+      color: "#fff",
+    },
+  },
+
+  // --- PromotionForm ---
+  promotionForm: {
+    container: { padding: 16 },
+    fieldContainer: { marginBottom: 16 },
+    label: {
+      fontSize: 14,
+      fontWeight: "600",
+      marginBottom: 8,
+    },
+    typeButton: {
+      height: 50,
+      justifyContent: "center",
+      paddingHorizontal: 12,
+      borderRadius: 8,
+      borderWidth: 1,
+    },
+    typeButtonText: {
+      fontSize: 16,
+    },
+    row: { flexDirection: "row", justifyContent: "space-between" },
+    halfField: { flex: 1, marginRight: 8 },
+    modalContainer: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      backgroundColor: "rgba(0,0,0,0.5)",
+    },
+    modalContent: {
+      padding: 20,
+      borderRadius: 12,
+      minWidth: 280,
+      maxHeight: "70%",
+    },
+    modalScroll: {
+      maxHeight: 300,
+    },
+    modalTitle: {
+      fontSize: 18,
+      fontWeight: "bold",
+      marginBottom: 16,
+      textAlign: "center",
+    },
+    modalOption: {
+      paddingVertical: 14,
+      borderBottomWidth: 1,
+    },
+    modalOptionText: {
+      fontSize: 16,
+      textAlign: "center",
+    },
+    modalCancel: {
+      marginTop: 12,
+      paddingVertical: 14,
+    },
+    modalCancelText: {
+      fontSize: 16,
+      fontWeight: "600",
+    },
+    dateButton: {
+      height: 50,
+      justifyContent: "center",
+      paddingHorizontal: 12,
+      borderRadius: 8,
+      borderWidth: 1,
+    },
+    dateButtonText: {
+      fontSize: 16,
+    },
+  },
+
+  // --- PromotionList ---
+  promotionList: {
+    container: {
+      flex: 1,
+    },
+    filterContainer: {
+      paddingVertical: 12,
+    },
+    filterList: {
+      paddingHorizontal: 16,
+    },
+    filterTab: {
+      marginRight: 10,
+      borderRadius: 20,
+      overflow: "hidden",
+    },
+    filterTabActive: {
+      borderRadius: 20,
+    },
+    filterTabGradient: {
+      paddingHorizontal: 18,
+      paddingVertical: 10,
+      borderRadius: 20,
+    },
+    filterTabText: {
+      paddingHorizontal: 18,
+      paddingVertical: 10,
+      fontSize: 14,
+      fontWeight: "600",
+      color: "#666",
+    },
+    filterTabTextActive: {
+      fontSize: 14,
+      fontWeight: "600",
+      color: "#FFFFFF",
+    },
+    listContent: {
+      paddingHorizontal: 16,
+      paddingBottom: 20,
+      flexGrow: 1,
+    },
+    emptyContainer: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      paddingVertical: 60,
+    },
+    emptyIcon: {
+      fontSize: 64,
+      marginBottom: 16,
+    },
+    emptyTitle: {
+      fontSize: 20,
+      fontWeight: "700",
+      color: "#333",
+      marginBottom: 8,
+    },
+    emptySubtitle: {
+      fontSize: 14,
+      color: "#666",
+      textAlign: "center",
+      paddingHorizontal: 40,
+    },
+  },
+
+  // --- ToggleSwitch ---
+  toggleSwitch: {
+    container: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+    },
+    label: {
+      fontSize: 16,
+      fontWeight: "500",
+    },
+  },
 };
 
-// Common style combinations
-export const commonStyles = {
-  inputWithLabel: [styles.fieldContainer, styles.label, styles.input],
-  cardWithShadow: [styles.card, { shadowColor: "#000", shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 8, elevation: 4 }],
-  centerContent: [styles.flex1, styles.rowCenter],
-  spaceBetween: [styles.rowBetween, styles.flex1],
+// Export componentStyles with proper typing
+export const componentStyles = StyleSheet.create(componentStylesRaw as any);
+
+// =============================================================================
+// APP STYLES - Page-specific styles
+// =============================================================================
+
+const appStylesRaw = {
+  // --- HomeScreen ---
+  homeScreen: {
+    container: {
+      flex: 1,
+    },
+    headerGradient: {
+      paddingHorizontal: 20,
+      paddingTop: 16,
+      paddingBottom: 24,
+      borderBottomLeftRadius: 24,
+      borderBottomRightRadius: 24,
+    },
+    headerContent: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+    },
+    headerTitle: {
+      fontSize: 28,
+      fontWeight: "800",
+      color: "#FFFFFF",
+      marginBottom: 4,
+    },
+    headerSubtitle: {
+      fontSize: 14,
+      color: "rgba(255,255,255,0.85)",
+    },
+    themeButton: {
+      width: 44,
+      height: 44,
+      borderRadius: 22,
+      borderWidth: 1,
+      alignItems: "center",
+      justifyContent: "center",
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.15,
+      shadowRadius: 6,
+      elevation: 3,
+    },
+    themeButtonIcon: {
+      fontSize: 21,
+      lineHeight: 24,
+      color: "#FFFFFF",
+      fontWeight: "700",
+    },
+    themeButtonIconStack: {
+      width: 24,
+      height: 24,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    themeIconLayer: {
+      position: "absolute",
+      textAlign: "center",
+    },
+    createButtonContainer: {
+      position: "absolute",
+      bottom: 24,
+      left: 20,
+      right: 20,
+    },
+    createButton: {
+      backgroundColor: "#7C3AED",
+    },
+  },
+
+  // --- CreatePromotionScreen ---
+  createPromotionScreen: {
+    container: {
+      flex: 1,
+    },
+    headerGradient: {
+      paddingHorizontal: 16,
+      paddingTop: 12,
+      paddingBottom: 20,
+      borderBottomLeftRadius: 24,
+      borderBottomRightRadius: 24,
+    },
+    headerContent: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+    },
+    backButton: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      backgroundColor: "rgba(255,255,255,0.2)",
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    backButtonText: {
+      fontSize: 24,
+      color: "#FFFFFF",
+      fontWeight: "600",
+    },
+    headerTitle: {
+      fontSize: 20,
+      fontWeight: "700",
+      color: "#FFFFFF",
+    },
+    placeholder: {
+      width: 40,
+    },
+    scrollContent: {
+      padding: 16,
+      paddingBottom: 40,
+    },
+  },
 };
 
+// Export appStyles with proper typing
+export const appStyles = StyleSheet.create(appStylesRaw as any);
+
+export const getPromotionCardThemeStyles = (
+  theme: Theme,
+  isDark: boolean,
+  status?: string
+) => {
+  const gradientColors =
+    status === "ACTIVE"
+      ? [theme.gradientStart, theme.gradientEnd]
+      : status === "INACTIVE"
+      ? [theme.cardAlt, theme.textMuted]
+      : [theme.gradientMid, theme.gradientEnd];
+
+  return {
+    gradientColors,
+    cardContainer: {
+      backgroundColor: theme.card,
+      shadowColor: isDark ? "#000000" : theme.text,
+      borderWidth: 1,
+      borderColor: isDark ? theme.border : "transparent",
+    },
+    promoCodeBadge: {
+      borderColor: "rgba(255, 255, 255, 0.35)",
+    },
+    promoCode: {
+      color: "#FFFFFF",
+    },
+    title: {
+      color: "#FFFFFF",
+    },
+    discountValue: {
+      color: "#FFFFFF",
+    },
+    typeBadge: {
+      backgroundColor: "rgba(255, 255, 255, 0.2)",
+    },
+    typeText: {
+      color: "#FFFFFF",
+    },
+    verticalDivider: {
+      backgroundColor: "rgba(255, 255, 255, 0.25)",
+    },
+    dateLabel: {
+      color: "rgba(255, 255, 255, 0.75)",
+    },
+    dateValue: {
+      color: "#FFFFFF",
+    },
+    editButtonText: {
+      color: theme.primary,
+    },
+    deleteButton: {
+      borderColor: "rgba(255, 255, 255, 0.45)",
+    },
+    deleteButtonText: {
+      color: "#FFFFFF",
+    },
+  };
+};
+
+// =============================================================================
+// DEFAULT EXPORT - For easy importing
+// =============================================================================
+
+export default {
+  ...sharedStyles,
+  ...componentStyles,
+  ...appStyles,
+};

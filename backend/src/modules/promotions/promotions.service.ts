@@ -31,12 +31,26 @@ export const getPromotionByIdService = async (id: number) => {
 };
 
 export const updatePromotionService = async (id: number, data: Partial<Promotion>) => {
+  console.log("[SERVICE] updatePromotionService called with id:", id, "data:", data);
+  
+  if (isNaN(id)) {
+    console.error("[SERVICE] Invalid ID - NaN detected");
+    throw new ApiError("Invalid ID", 400);
+  }
+  
   validateId(id);
   validateUpdatePromotion(data);
-  
+
+  console.log("[SERVICE] Validation passed, checking if promotion exists...");
   const existing = await getPromotionByIdRepo(id);
-  if (!existing) throw new ApiError(Warnings.notFound("Promotion").message, 404);
+  console.log("[SERVICE] Existing promotion:", existing);
   
+  if (!existing) {
+    console.error("[SERVICE] Promotion not found with id:", id);
+    throw new ApiError(Warnings.notFound("Promotion").message, 404);
+  }
+
+  console.log("[SERVICE] Calling updatePromotionRepo...");
   return updatePromotionRepo(id, data);
 };
 

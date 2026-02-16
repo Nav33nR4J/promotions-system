@@ -2,20 +2,23 @@ import React from "react";
 import { TouchableOpacity, Text, StyleSheet, ActivityIndicator } from "react-native";
 import LinearGradient from "react-native-linear-gradient";
 import { useTheme } from "../../theme/ThemeProvider";
+import { sharedStyles, componentStyles } from "../../theme/styles";
 
 interface ButtonProps {
   title: string;
   onPress: () => void;
   disabled?: boolean;
   loading?: boolean;
+  style?: any;
 }
 
-export const Button = ({ title, onPress, disabled, loading }: ButtonProps) => {
+export const Button = ({ title, onPress, disabled, loading, style }: ButtonProps) => {
   const { theme } = useTheme();
 
   const containerStyle = [
-    styles.container,
+    componentStyles.button.container,
     disabled && { opacity: 0.6 },
+    style,
   ];
 
   return (
@@ -42,12 +45,3 @@ export const Button = ({ title, onPress, disabled, loading }: ButtonProps) => {
     </LinearGradient>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    height: 52,
-    borderRadius: 12,
-    marginVertical: 8,
-    overflow: "hidden",
-  },
-});

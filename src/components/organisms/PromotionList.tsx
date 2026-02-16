@@ -7,6 +7,7 @@ import { RootState } from "../../redux/store";
 import { PromotionCard } from "../molecules/PromotionCard";
 import { Text } from "../atoms/Text";
 import { useTheme } from "../../theme/ThemeProvider";
+import { componentStyles } from "../../theme/styles";
 
 type FilterType = "all" | "active" | "upcoming" | "expired";
 
@@ -16,26 +17,30 @@ interface FilterTabProps {
   onPress: () => void;
 }
 
-const FilterTab: React.FC<FilterTabProps> = React.memo(({ label, isActive, onPress }) => (
-  <TouchableOpacity
-    style={[styles.filterTab, isActive && styles.filterTabActive]}
-    onPress={onPress}
-    activeOpacity={0.7}
-  >
-    {isActive ? (
-      <LinearGradient
-        colors={["#FF6B6B", "#FF3B30"]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 0 }}
-        style={styles.filterTabGradient}
-      >
-        <Text style={styles.filterTabTextActive}>{label}</Text>
-      </LinearGradient>
-    ) : (
-      <Text style={styles.filterTabText}>{label}</Text>
-    )}
-  </TouchableOpacity>
-));
+const FilterTab: React.FC<FilterTabProps> = React.memo(({ label, isActive, onPress }) => {
+  const { theme } = useTheme();
+  
+  return (
+    <TouchableOpacity
+      style={[componentStyles.promotionList.filterTab, isActive && componentStyles.promotionList.filterTabActive]}
+      onPress={onPress}
+      activeOpacity={0.7}
+    >
+      {isActive ? (
+        <LinearGradient
+          colors={[theme.gradientStart, theme.gradientEnd]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          style={componentStyles.promotionList.filterTabGradient}
+        >
+          <Text style={componentStyles.promotionList.filterTabTextActive}>{label}</Text>
+        </LinearGradient>
+      ) : (
+        <Text style={componentStyles.promotionList.filterTabText}>{label}</Text>
+      )}
+    </TouchableOpacity>
+  );
+});
 
 interface PromotionListProps {
   onEditPromotion: (promotion: Promotion) => void;
@@ -70,10 +75,10 @@ export const PromotionList: React.FC<PromotionListProps> = ({ onEditPromotion })
   const keyExtractor = useCallback((item: Promotion) => String(item.id), []);
 
   const ListEmptyComponent = useMemo(() => (
-    <View style={styles.emptyContainer}>
-      <Text style={styles.emptyIcon}>🎉</Text>
-      <Text style={styles.emptyTitle}>No Promotions Found</Text>
-      <Text style={styles.emptySubtitle}>
+    <View style={componentStyles.promotionList.emptyContainer}>
+      <Text style={componentStyles.promotionList.emptyIcon}>🎉</Text>
+      <Text style={componentStyles.promotionList.emptyTitle}>No Promotions Found</Text>
+      <Text style={componentStyles.promotionList.emptySubtitle}>
         {filter === "all" 
           ? "Create your first promotion to get started!"
           : `No ${filter} promotions at the moment`}
@@ -82,9 +87,9 @@ export const PromotionList: React.FC<PromotionListProps> = ({ onEditPromotion })
   ), [filter]);
 
   return (
-    <View style={styles.container}>
+    <View style={componentStyles.promotionList.container}>
       {/* Filter Tabs */}
-      <View style={styles.filterContainer}>
+      <View style={componentStyles.promotionList.filterContainer}>
         <FlatList
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -102,7 +107,7 @@ export const PromotionList: React.FC<PromotionListProps> = ({ onEditPromotion })
               onPress={() => handleFilterChange(item.key)}
             />
           )}
-          contentContainerStyle={styles.filterList}
+          contentContainerStyle={componentStyles.promotionList.filterList}
         />
       </View>
 
@@ -111,14 +116,14 @@ export const PromotionList: React.FC<PromotionListProps> = ({ onEditPromotion })
         data={filteredPromotions}
         keyExtractor={keyExtractor}
         renderItem={renderItem}
-        contentContainerStyle={styles.listContent}
+        contentContainerStyle={componentStyles.promotionList.listContent}
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl
             refreshing={loading}
             onRefresh={handleRefresh}
-            colors={["#FF3B30"]}
-            tintColor="#FF3B30"
+            colors={[theme.primary]}
+            tintColor={theme.primary}
           />
         }
         ListEmptyComponent={ListEmptyComponent}
@@ -126,68 +131,4 @@ export const PromotionList: React.FC<PromotionListProps> = ({ onEditPromotion })
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  filterContainer: {
-    paddingVertical: 12,
-  },
-  filterList: {
-    paddingHorizontal: 16,
-  },
-  filterTab: {
-    marginRight: 10,
-    borderRadius: 20,
-    overflow: "hidden",
-  },
-  filterTabActive: {
-    borderRadius: 20,
-  },
-  filterTabGradient: {
-    paddingHorizontal: 18,
-    paddingVertical: 10,
-    borderRadius: 20,
-  },
-  filterTabText: {
-    paddingHorizontal: 18,
-    paddingVertical: 10,
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#666",
-  },
-  filterTabTextActive: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#FFFFFF",
-  },
-  listContent: {
-    paddingHorizontal: 16,
-    paddingBottom: 20,
-    flexGrow: 1,
-  },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingVertical: 60,
-  },
-  emptyIcon: {
-    fontSize: 64,
-    marginBottom: 16,
-  },
-  emptyTitle: {
-    fontSize: 20,
-    fontWeight: "700",
-    color: "#333",
-    marginBottom: 8,
-  },
-  emptySubtitle: {
-    fontSize: 14,
-    color: "#666",
-    textAlign: "center",
-    paddingHorizontal: 40,
-  },
-});
 

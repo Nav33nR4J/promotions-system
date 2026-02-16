@@ -50,15 +50,27 @@ export const updatePromotionRepo = async (id: number, data: Partial<Promotion>) 
   if (data.status !== undefined) { fields.push("status = ?"); values.push(data.status); }
   if (data.usage_limit !== undefined) { fields.push("usage_limit = ?"); values.push(data.usage_limit); }
 
-  if (fields.length === 0) return { id, ...data };
+  if (fields.length === 0) {
+    console.log("[REPO] No fields to update, returning existing data");
+    return { id, ...data };
+  }
 
-  values.push(id);
-  await queryWithTimeout(
-    `UPDATE promotions SET ${fields.join(", ")} WHERE id = ?`,
-    values
-  );
+  console.log("[REPO] Executing UPDATE:", `UPDATE promotions SET ${fields.join(", ")} WHERE id = ?`, [...values, id]);
 
-  return getPromotionByIdRepo(id);
+  try {
+    await queryWithTimeout(
+      `UPDATE promotions SET ${fields.join(", ")} WHERE id = ?`,
+      [...values, id]
+    );
+    console.log("[REPO] UPDATE executed successfully");
+    
+    const result = await getPromotionByIdRepo(id);
+    console.log("[REPO] Fetched updated promotion:", result);
+    return result;
+  } catch (error) {
+    console.error("[REPO] Error in updatePromotionRepo:", error);
+    throw error;
+  }
 };
 
 export const togglePromotionStatusRepo = async (id: number) => {

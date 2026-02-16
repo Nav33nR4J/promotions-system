@@ -12,6 +12,12 @@ import {
 
 const REQUEST_TIMEOUT_MS = Number(process.env.REQUEST_TIMEOUT_MS || 15000);
 
+// Helper function to safely parse ID
+const parseId = (param: string | string[]): number => {
+  const idStr = Array.isArray(param) ? param[0] : param;
+  return parseInt(idStr, 10);
+};
+
 const withRequestTimeout = async <T>(promise: Promise<T>): Promise<T> => {
   return new Promise((resolve, reject) => {
     const timer = setTimeout(() => {
@@ -39,6 +45,7 @@ export const createPromotion = async (
     const result = await withRequestTimeout(createPromotionService(req.body));
     res.status(201).json({ success: true, data: result });
   } catch (err) {
+    console.error("Error in createPromotion:", err);
     next(err);
   }
 };
@@ -54,6 +61,7 @@ export const getPromotions = async (
     );
     res.json({ success: true, data: result });
   } catch (err) {
+    console.error("Error in getPromotions:", err);
     next(err);
   }
 };
@@ -64,10 +72,11 @@ export const getPromotionById = async (
   next: NextFunction
 ) => {
   try {
-    const id = Number(req.params.id);
+    const id = parseId(req.params.id);
     const result = await withRequestTimeout(getPromotionByIdService(id));
     res.json({ success: true, data: result });
   } catch (err) {
+    console.error("Error in getPromotionById:", err);
     next(err);
   }
 };
@@ -78,10 +87,13 @@ export const updatePromotion = async (
   next: NextFunction
 ) => {
   try {
-    const id = Number(req.params.id);
+    const id = parseId(req.params.id);
+    console.log("[UPDATE] Request received - ID:", id, "Body:", JSON.stringify(req.body));
     const result = await withRequestTimeout(updatePromotionService(id, req.body));
+    console.log("[UPDATE] Success - Result:", JSON.stringify(result));
     res.json({ success: true, data: result });
   } catch (err) {
+    console.error("[UPDATE] Error:", err);
     next(err);
   }
 };
@@ -92,10 +104,11 @@ export const togglePromotionStatus = async (
   next: NextFunction
 ) => {
   try {
-    const id = Number(req.params.id);
+    const id = parseId(req.params.id);
     const result = await withRequestTimeout(togglePromotionStatusService(id));
     res.json({ success: true, data: result });
   } catch (err) {
+    console.error("Error in togglePromotionStatus:", err);
     next(err);
   }
 };
@@ -106,10 +119,11 @@ export const deletePromotion = async (
   next: NextFunction
 ) => {
   try {
-    const id = Number(req.params.id);
+    const id = parseId(req.params.id);
     const result = await withRequestTimeout(deletePromotionService(id));
     res.json({ success: true, data: result });
   } catch (err) {
+    console.error("Error in deletePromotion:", err);
     next(err);
   }
 };
@@ -123,6 +137,8 @@ export const validatePromotion = async (
     const result = await withRequestTimeout(validatePromotionService(req.body));
     res.json({ success: true, data: result });
   } catch (err) {
+    console.error("Error in validatePromotion:", err);
     next(err);
   }
 };
+

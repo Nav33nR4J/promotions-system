@@ -7,6 +7,10 @@ export const errorHandler = (
   res: Response,
   _next: NextFunction
 ) => {
+  // Log the actual error for debugging
+  console.error("[ERROR HANDLER] Error occurred:", err.message);
+  console.error("[ERROR HANDLER] Stack:", err.stack);
+
   if (err instanceof ApiError) {
     return res.status(err.statusCode).json({
       success: false,
@@ -29,6 +33,6 @@ export const errorHandler = (
 
   return res.status(500).json({
     success: false,
-    message: "Internal Server Error",
+    message: "Internal Server Error: " + err.message,
   });
 };

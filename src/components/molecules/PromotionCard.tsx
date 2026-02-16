@@ -1,35 +1,48 @@
 import React, { memo, useCallback } from "react";
-import { View, StyleSheet, TouchableOpacity, Alert } from "react-native";
+import { View, TouchableOpacity, Alert } from "react-native";
 import LinearGradient from "react-native-linear-gradient";
 import { useDispatch } from "react-redux";
 import { Text } from "../atoms/Text";
 import { ToggleSwitch } from "../molecules/ToggleSwitch";
-import { Promotion, togglePromotionStatus, deletePromotion } from "../../redux/slices/promotionsSlice";
+import {
+  Promotion,
+  togglePromotionStatus,
+  deletePromotion,
+} from "../../redux/slices/promotionsSlice";
+import { AppDispatch } from "../../redux/store";
 import { useTheme } from "../../theme/ThemeProvider";
-import { getStatusGradient } from "../../theme/colors";
+import {
+  componentStyles,
+  getPromotionCardThemeStyles,
+} from "../../theme/styles";
 
 interface PromotionCardProps {
   promotion: Promotion;
   onEdit: (promotion: Promotion) => void;
 }
 
-const PromotionCardComponent: React.FC<PromotionCardProps> = ({ promotion, onEdit }) => {
-  const dispatch = useDispatch();
+const PromotionCardComponent: React.FC<PromotionCardProps> = ({
+  promotion,
+  onEdit,
+}) => {
+  const dispatch = useDispatch<AppDispatch>();
+  const { theme, isDark } = useTheme();
   const isActive = promotion.status === "ACTIVE";
-  const gradientColors = getStatusGradient(promotion.status);
+  const styles = componentStyles.promotionCard;
+  const themedStyles = getPromotionCardThemeStyles(theme, isDark, promotion.status);
 
   const handleToggle = useCallback(async () => {
     try {
-      await dispatch(togglePromotionStatus(promotion.id!));
-    } catch (error) {
-      Alert.alert("Error", "Failed to update promotion status");
+      await dispatch(togglePromotionStatus(promotion.id!)).unwrap();
+    } catch {
+      Alert.alert("Update Failed", "Unable to update promotion status.");
     }
   }, [dispatch, promotion.id]);
 
   const handleDelete = useCallback(() => {
     Alert.alert(
       "Delete Promotion",
-      `Are you sure you want to delete "${promotion.title}"?`,
+      `This action will permanently remove "${promotion.title}".`,
       [
         { text: "Cancel", style: "cancel" },
         {
@@ -37,221 +50,119 @@ const PromotionCardComponent: React.FC<PromotionCardProps> = ({ promotion, onEdi
           style: "destructive",
           onPress: async () => {
             try {
-              await deletePromotion(promotion.id!);
-            } catch (error) {
-              Alert.alert("Error", "Failed to delete promotion");
+              await dispatch(deletePromotion(promotion.id!)).unwrap();
+            } catch {
+              Alert.alert("Deletion Failed", "Unable to delete promotion.");
             }
           },
         },
       ]
     );
-  }, [promotion.id, promotion.title]);
+  }, [dispatch, promotion.id, promotion.title]);
 
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
     return date.toLocaleDateString("en-IN", {
-      day: "numeric",
+      day: "2-digit",
       month: "short",
       year: "numeric",
     });
   };
 
   const formatValue = () => {
+    const formatted = new Intl.NumberFormat("en-IN").format(promotion.value);
     return promotion.type === "PERCENTAGE"
-      ? `${promotion.value}%`
-      : `₹${promotion.value}`;
+      ? `${formatted}%`
+      : `₹${formatted}`;
   };
 
   return (
-    <View style={cardStyles.card}>
+    <View style={[styles.cardContainer, themedStyles.cardContainer]}>
       <LinearGradient
-        colors={gradientColors}
+        colors={themedStyles.gradientColors}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 0 }}
-        style={cardStyles.gradientContainer}
+        style={styles.gradient}
       >
-        {/* Header Row */}
-        <View style={cardStyles.headerRow}>
-          <View style={cardStyles.titleContainer}>
-            <Text style={cardStyles.promoCode}>{promotion.promo_code}</Text>
-            <Text style={cardStyles.title}>{promotion.title}</Text>
-          </View>
-          <View style={cardStyles.toggleContainer}>
-            <ToggleSwitch value={isActive} onValueChange={handleToggle} />
-          </View>
-        </View>
+        <View style={styles.cardContent}>
+          {/* Left Section - Main Info */}
+          <View style={styles.leftSection}>
+            {/* Header */}
+            <View style={styles.header}>
+              <View style={[styles.promoCodeBadge, themedStyles.promoCodeBadge]}>
+                <Text style={[styles.promoCode, themedStyles.promoCode]}>{promotion.promo_code}</Text>
+              </View>
+              <ToggleSwitch value={isActive} onValueChange={handleToggle} />
+            </View>
 
-        {/* Discount Value */}
-        <View style={cardStyles.valueRow}>
-          <Text style={cardStyles.discountLabel}>Discount</Text>
-          <Text style={cardStyles.discountValue}>{formatValue()}</Text>
-          <Text style={cardStyles.discountType}>
-            {promotion.type === "PERCENTAGE" ? "OFF" : "FLAT"}
-          </Text>
-        </View>
-
-        {/* Date Range */}
-        <View style={cardStyles.dateRow}>
-          <View style={cardStyles.dateItem}>
-            <Text style={cardStyles.dateLabel}>Start</Text>
-            <Text style={cardStyles.dateValue}>{formatDate(promotion.start_at)}</Text>
-          </View>
-          <View style={cardStyles.dateDivider} />
-          <View style={cardStyles.dateItem}>
-            <Text style={cardStyles.dateLabel}>End</Text>
-            <Text style={cardStyles.dateValue}>{formatDate(promotion.end_at)}</Text>
-          </View>
-        </View>
-
-        {/* Action Buttons */}
-        <View style={cardStyles.actionRow}>
-          <TouchableOpacity
-            style={cardStyles.actionButton}
-            onPress={() => onEdit(promotion)}
-          >
-            <Text style={cardStyles.actionButtonText}>✏️ Edit</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[cardStyles.actionButton, cardStyles.deleteButton]}
-            onPress={handleDelete}
-          >
-            <Text style={[cardStyles.actionButtonText, cardStyles.deleteButtonText]}>
-              🗑️ Delete
+            <Text style={[styles.title, themedStyles.title]} numberOfLines={1}>
+              {promotion.title}
             </Text>
-          </TouchableOpacity>
+
+            {/* Discount Value */}
+            <View style={styles.discountRow}>
+              <Text style={[styles.discountValue, themedStyles.discountValue]}>{formatValue()}</Text>
+              <View style={[styles.typeBadge, themedStyles.typeBadge]}>
+                <Text style={[styles.typeText, themedStyles.typeText]}>
+                  {promotion.type === "PERCENTAGE" ? "%" : "Flat"}
+                </Text>
+              </View>
+            </View>
+          </View>
+
+          {/* Vertical Divider */}
+          <View style={[styles.verticalDivider, themedStyles.verticalDivider]} />
+
+          {/* Right Section - Dates & Actions */}
+          <View style={styles.rightSection}>
+            {/* Validity Period */}
+            <View style={styles.datesContainer}>
+              <View style={styles.dateItem}>
+                <Text style={[styles.dateLabel, themedStyles.dateLabel]}>From</Text>
+                <Text style={[styles.dateValue, themedStyles.dateValue]}>
+                  {formatDate(promotion.start_at)}
+                </Text>
+              </View>
+
+              <View style={styles.dateItem}>
+                <Text style={[styles.dateLabel, themedStyles.dateLabel]}>Until</Text>
+                <Text style={[styles.dateValue, themedStyles.dateValue]}>
+                  {formatDate(promotion.end_at)}
+                </Text>
+              </View>
+            </View>
+
+            {/* Actions */}
+            <View style={styles.actionSection}>
+              <TouchableOpacity
+                style={[styles.actionButton, styles.editButton, themedStyles.editButton]}
+                activeOpacity={0.7}
+                onPress={() => onEdit(promotion)}
+              >
+                <Text style={[styles.editButtonText, themedStyles.editButtonText]}>Edit</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[styles.actionButton, styles.deleteButton, themedStyles.deleteButton]}
+                activeOpacity={0.7}
+                onPress={handleDelete}
+              >
+                <Text style={[styles.deleteButtonText, themedStyles.deleteButtonText]}>Delete</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
         </View>
       </LinearGradient>
     </View>
   );
 };
 
-// Memoized component for performance
-export const PromotionCard = memo(PromotionCardComponent, (prevProps, nextProps) => {
-  return prevProps.promotion.id === nextProps.promotion.id &&
+// Memoized for optimal performance
+export const PromotionCard = memo(
+  PromotionCardComponent,
+  (prevProps, nextProps) =>
+    prevProps.promotion.id === nextProps.promotion.id &&
     prevProps.promotion.status === nextProps.promotion.status &&
-    prevProps.promotion.title === nextProps.promotion.title;
-});
-
-// Inline styles specific to PromotionCard
-const cardStyles = StyleSheet.create({
-  card: {
-    marginVertical: 8,
-    borderRadius: 16,
-    overflow: "hidden",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 12,
-    elevation: 6,
-  },
-  gradientContainer: {
-    padding: 16,
-    borderRadius: 16,
-  },
-  headerRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    marginBottom: 12,
-  },
-  titleContainer: {
-    flex: 1,
-  },
-  promoCode: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "rgba(255,255,255,0.9)",
-    backgroundColor: "rgba(0,0,0,0.2)",
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 12,
-    alignSelf: "flex-start",
-    marginBottom: 6,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: "700",
-    color: "#FFFFFF",
-  },
-  toggleContainer: {
-    marginLeft: 12,
-  },
-  valueRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 12,
-  },
-  discountLabel: {
-    fontSize: 14,
-    color: "rgba(255,255,255,0.8)",
-    marginRight: 8,
-  },
-  discountValue: {
-    fontSize: 28,
-    fontWeight: "800",
-    color: "#FFFFFF",
-  },
-  discountType: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "rgba(255,255,255,0.9)",
-    marginLeft: 6,
-    backgroundColor: "rgba(255,255,255,0.2)",
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 8,
-  },
-  dateRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "rgba(255,255,255,0.15)",
-    borderRadius: 12,
-    padding: 12,
-    marginBottom: 12,
-  },
-  dateItem: {
-    flex: 1,
-    alignItems: "center",
-  },
-  dateDivider: {
-    width: 1,
-    height: 30,
-    backgroundColor: "rgba(255,255,255,0.3)",
-  },
-  dateLabel: {
-    fontSize: 12,
-    color: "rgba(255,255,255,0.7)",
-    marginBottom: 4,
-  },
-  dateValue: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#FFFFFF",
-  },
-  actionRow: {
-    flexDirection: "row",
-    gap: 12,
-  },
-  actionButton: {
-    flex: 1,
-    backgroundColor: "rgba(255,255,255,0.2)",
-    paddingVertical: 10,
-    borderRadius: 10,
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.3)",
-  },
-  actionButtonText: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#FFFFFF",
-  },
-  deleteButton: {
-    backgroundColor: "rgba(244,67,54,0.2)",
-    borderColor: "rgba(244,67,54,0.5)",
-  },
-  deleteButtonText: {
-    color: "#FFCDD2",
-  },
-});
-
+    prevProps.promotion.title === nextProps.promotion.title &&
+    prevProps.promotion.value === nextProps.promotion.value
+);

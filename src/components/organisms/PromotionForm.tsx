@@ -32,14 +32,28 @@ export const PromotionForm = ({ promotion, onSuccess }: PromotionFormProps) => {
   const { theme } = useTheme();
   
   // Initialize form with promotion data if editing
-  const [form, setForm] = useState<Promotion>({
-    promo_code: promotion?.promo_code || "",
-    title: promotion?.title || "",
-    type: promotion?.type || "PERCENTAGE",
-    value: promotion?.value || 0,
-    start_at: promotion?.start_at || getTodayDate(),
-    end_at: promotion?.end_at || getFutureDate(30),
-    status: promotion?.status || "ACTIVE",
+  const [form, setForm] = useState<Promotion>(() => {
+    if (promotion) {
+      return {
+        promo_code: promotion.promo_code || "",
+        title: promotion.title || "",
+        type: promotion.type || "PERCENTAGE",
+        // Ensure value is a number, not a string from API
+        value: typeof promotion.value === 'number' ? promotion.value : Number(promotion.value) || 0,
+        start_at: promotion.start_at || getTodayDate(),
+        end_at: promotion.end_at || getFutureDate(30),
+        status: promotion.status || "ACTIVE",
+      };
+    }
+    return {
+      promo_code: "",
+      title: "",
+      type: "PERCENTAGE" as const,
+      value: 0,
+      start_at: getTodayDate(),
+      end_at: getFutureDate(30),
+      status: "ACTIVE" as const,
+    };
   });
   
   const isEditing = !!promotion?.id;
@@ -129,8 +143,21 @@ export const PromotionForm = ({ promotion, onSuccess }: PromotionFormProps) => {
     setLoading(true);
     
     try {
-      if (isEditing) {
-        await dispatch(updatePromotion({ id: promotion.id!, data: form })).unwrap();
+      if (isEditing && promotion?.id) {
+        // Create update payload with only the necessary fields
+        const updateData = {
+          promo_code: form.promo_code,
+          title: form.title,
+          type: form.type,
+          value: form.value,
+          start_at: form.start_at,
+          end_at: form.end_at,
+          status: form.status,
+        };
+        
+        // Ensure ID is a number
+        const promotionId = typeof promotion.id === 'number' ? promotion.id : Number(promotion.id);
+        await dispatch(updatePromotion({ id: promotionId, data: updateData })).unwrap();
         Alert.alert("Success", "Promotion updated successfully!", [
           { text: "OK", onPress: () => {
             onSuccess?.();
@@ -413,3 +440,4 @@ const generateDateOptions = (minDate?: Date): { value: string; label: string }[]
   
   return options;
 };
+

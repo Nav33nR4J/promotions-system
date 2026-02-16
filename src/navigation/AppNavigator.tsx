@@ -8,7 +8,7 @@ const Stack = createNativeStackNavigator();
 
 export const AppNavigator = () => (
   <NavigationContainer>
-    <Stack.Navigator>
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Home" component={HomeScreen} />
       <Stack.Screen name="CreatePromotion" component={CreatePromotionScreen} />
     </Stack.Navigator>

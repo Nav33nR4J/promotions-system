@@ -17,27 +17,65 @@ const ToggleSwitchComponent: React.FC<ToggleSwitchProps> = ({
     new Animated.Value(value ? 1 : 0)
   ).current;
   const scale = useRef(new Animated.Value(1)).current;
+  
+  // Refs to track ongoing animations for cleanup
+  const toggleAnimationRef = useRef<Animated.CompositeAnimation | null>(null);
+  const scaleAnimationRef = useRef<Animated.CompositeAnimation | null>(null);
+
+  // Cleanup function to stop any running animations
+  const stopAllAnimations = useCallback(() => {
+    if (toggleAnimationRef.current) {
+      toggleAnimationRef.current.stop();
+      toggleAnimationRef.current = null;
+    }
+    if (scaleAnimationRef.current) {
+      scaleAnimationRef.current.stop();
+      scaleAnimationRef.current = null;
+    }
+    translateX.stopAnimation();
+    backgroundColor.stopAnimation();
+    scale.stopAnimation();
+  }, [translateX, backgroundColor, scale]);
 
   useEffect(() => {
-    Animated.parallel([
-      Animated.spring(translateX, {
-        toValue: value ? 22 : 0,
-        useNativeDriver: true,
-        tension: 100,
-        friction: 8,
-      }),
-      Animated.timing(backgroundColor, {
-        toValue: value ? 1 : 0,
-        duration: 200,
-        useNativeDriver: false,
-      }),
-    ]).start();
-  }, [value, translateX, backgroundColor]);
+    // Stop any running animations before starting new ones
+    stopAllAnimations();
+
+    // Use useNativeDriver: true for both animations to avoid conflicts
+    const translateXAnimation = Animated.spring(translateX, {
+      toValue: value ? 22 : 0,
+      useNativeDriver: true,
+      tension: 100,
+      friction: 8,
+    });
+
+    const backgroundColorAnimation = Animated.timing(backgroundColor, {
+      toValue: value ? 1 : 0,
+      duration: 200,
+      useNativeDriver: true, // Changed to true for consistency
+    });
+
+    toggleAnimationRef.current = Animated.parallel([
+      translateXAnimation,
+      backgroundColorAnimation,
+    ]);
+
+    toggleAnimationRef.current.start();
+
+    return () => {
+      // Cleanup on unmount or before next animation
+      stopAllAnimations();
+    };
+  }, [value, translateX, backgroundColor, stopAllAnimations]);
 
   const handlePress = useCallback(() => {
     if (!disabled) {
-      // Scale animation on press
-      Animated.sequence([
+      // Stop any existing scale animation before starting a new one
+      if (scaleAnimationRef.current) {
+        scaleAnimationRef.current.stop();
+      }
+
+      scaleAnimationRef.current = Animated.sequence([
         Animated.spring(scale, {
           toValue: 0.92,
           useNativeDriver: true,
@@ -50,8 +88,9 @@ const ToggleSwitchComponent: React.FC<ToggleSwitchProps> = ({
           tension: 300,
           friction: 10,
         }),
-      ]).start();
+      ]);
 
+      scaleAnimationRef.current.start();
       onValueChange(!value);
     }
   }, [disabled, onValueChange, value, scale]);

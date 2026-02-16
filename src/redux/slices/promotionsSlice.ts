@@ -148,6 +148,15 @@ const promotionsSlice = createSlice({
 
     // Toggle status
     builder
+      .addCase(togglePromotionStatus.pending, (state, action) => {
+        // Optimistic update: toggle the status immediately in the UI
+        const id = action.meta.arg;
+        const index = state.promotions.findIndex((p) => p.id === id);
+        if (index !== -1) {
+          const currentStatus = state.promotions[index].status;
+          state.promotions[index].status = currentStatus === "ACTIVE" ? "INACTIVE" : "ACTIVE";
+        }
+      })
       .addCase(togglePromotionStatus.fulfilled, (state, action) => {
         const index = state.promotions.findIndex((p) => p.id === action.payload.id);
         if (index !== -1) {
@@ -155,6 +164,13 @@ const promotionsSlice = createSlice({
         }
       })
       .addCase(togglePromotionStatus.rejected, (state, action) => {
+        // Revert optimistic update on failure
+        const id = action.meta.arg;
+        const index = state.promotions.findIndex((p) => p.id === id);
+        if (index !== -1) {
+          const currentStatus = state.promotions[index].status;
+          state.promotions[index].status = currentStatus === "ACTIVE" ? "INACTIVE" : "ACTIVE";
+        }
         state.error = action.error.message;
       });
 

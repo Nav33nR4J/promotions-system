@@ -23,19 +23,19 @@ export interface Theme {
 }
 
 export const lightTheme = {
-  primary: "#FF3B30",
-  secondary: "#FF6B6B",
-  background: "#FFFFFF",
+  primary: "#7C3AED",
+  secondary: "#A78BFA",
+  background: "#F8FAFC",
   card: "#FFFFFF",
-  cardAlt: "#F8F8F8",
-  text: "#111111",
-  textSecondary: "#666666",
-  textMuted: "#999999",
-  gradientStart: "#FF6B6B",
-  gradientEnd: "#FF3B30",
-  gradientMid: "#FF5252",
-  border: "#E0E0E0",
-  divider: "#EEEEEE",
+  cardAlt: "#EEF2FF",
+  text: "#0F172A",
+  textSecondary: "#475569",
+  textMuted: "#94A3B8",
+  gradientStart: "#A78BFA",
+  gradientEnd: "#7C3AED",
+  gradientMid: "#8B5CF6",
+  border: "#E2E8F0",
+  divider: "#E2E8F0",
   success: "#4CAF50",
   warning: "#FFC107",
   error: "#F44336",
@@ -45,19 +45,19 @@ export const lightTheme = {
 };
 
 export const darkTheme = {
-  primary: "#FF3B30",
-  secondary: "#FF6B6B",
-  background: "#121212",
-  card: "#1E1E1E",
-  cardAlt: "#2C2C2C",
+  primary: "#8B5CF6",
+  secondary: "#C4B5FD",
+  background: "#0A061A",
+  card: "#1E1B3A",
+  cardAlt: "#2D2A5C",
   text: "#FFFFFF",
-  textSecondary: "#B0B0B0",
-  textMuted: "#808080",
-  gradientStart: "#FF6B6B",
-  gradientEnd: "#FF3B30",
-  gradientMid: "#FF5252",
-  border: "#333333",
-  divider: "#2C2C2C",
+  textSecondary: "#C4B5FD",
+  textMuted: "#8B5CF6",
+  gradientStart: "#C4B5FD",
+  gradientEnd: "#8B5CF6",
+  gradientMid: "#A78BFA",
+  border: "#4C1D95",
+  divider: "#2D2A5C",
   success: "#4CAF50",
   warning: "#FFC107",
   error: "#F44336",
@@ -68,8 +68,8 @@ export const darkTheme = {
 
 // Pre-defined gradient color combinations
 export const gradientPresets = {
-  // Primary red gradient (default)
-  primary: ["#FF6B6B", "#FF3B30"],
+  // Primary purple gradient (default)
+  primary: ["#A78BFA", "#7C3AED"],
   
   // Blue gradient
   blue: ["#4FC3F7", "#2196F3"],
@@ -96,7 +96,7 @@ export const gradientPresets = {
   active: ["#66BB6A", "#43A047"],
   inactive: ["#90A4AE", "#607D8B"],
   upcoming: ["#42A5F5", "#1E88E5"],
-  expired: ["#EF5350", "#E53935"],
+  expired: ["#A78BFA", "#7C3AED"],
 };
 
 // Get gradient colors based on promotion status

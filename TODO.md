@@ -1,12 +1,11 @@
-# TODO: Fix server hanging issue on port 5000
+# Color Theme Update - TODO List
 
-## Problem
-Server hangs and nothing is displayed because:
-1. `connectDB()` blocks indefinitely waiting for database connection
-2. No timeout handling on database operations
+## Task: Update color theme from red to purple/violet
 
-## Plan
-- [x] Update `backend/src/config/db.ts` - Add timeout to database operations
-- [x] Update `backend/src/server.ts` - Add timeout wrapper for connectDB and handle DB connection errors gracefully
-- [ ] Test the server starts without blocking
+### Completed:
+- [x] Update src/theme/colors.ts - Core color definitions
+- [x] Update src/theme/styles.ts - Hardcoded color references
+- [x] Update src/screens/HomeScreen.tsx - Hardcoded gradient colors
+- [x] Update src/screens/CreatePromotionScreen.tsx - Hardcoded gradient colors
+- [x] Update src/components/organisms/PromotionList.tsx - Hardcoded gradient and refresh colors
 
