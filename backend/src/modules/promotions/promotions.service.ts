@@ -14,9 +14,56 @@ import {
 import { validateCreatePromotion, validateUpdatePromotion, validateId } from "../../validations/promotions.validation";
 import { Promotion, ValidatePromoInput, CustomItemDiscount, ComboDiscount } from "../../types/promotions.types";
 
+/**
+ * Convert ISO 8601 datetime string to MySQL-compatible format (YYYY-MM-DD HH:MM:SS)
+ * MySQL expects: '2026-02-19 18:30:00' instead of '2026-02-19T18:30:00.000Z'
+ */
+const convertToMySQLDateTime = (dateStr: string | undefined): string | undefined => {
+  if (!dateStr) return dateStr;
+  
+  try {
+    const date = new Date(dateStr);
+    if (isNaN(date.getTime())) {
+      console.warn("[SERVICE] Invalid date string:", dateStr);
+      return dateStr;
+    }
+    
+    // Format to MySQL datetime: YYYY-MM-DD HH:MM:SS
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+    
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+  } catch (error) {
+    console.error("[SERVICE] Error converting date:", error);
+    return dateStr;
+  }
+};
+
+/**
+ * Prepare promotion data for database by converting datetime fields to MySQL format
+ */
+const preparePromotionDataForDB = (data: Partial<Promotion>): Promotion => {
+  const convertedData = { ...data } as Promotion;
+  
+  if (convertedData.start_at) {
+    convertedData.start_at = convertToMySQLDateTime(convertedData.start_at) as string;
+  }
+  
+  if (convertedData.end_at) {
+    convertedData.end_at = convertToMySQLDateTime(convertedData.end_at) as string;
+  }
+  
+  return convertedData;
+};
+
 export const createPromotionService = async (data: Promotion) => {
   validateCreatePromotion(data);
-  return createPromotionRepo(data);
+  const preparedData = preparePromotionDataForDB(data);
+  return createPromotionRepo(preparedData);
 };
 
 export const getPromotionsService = async (filter?: string) => {
@@ -50,8 +97,12 @@ export const updatePromotionService = async (id: number, data: Partial<Promotion
     throw new ApiError(Warnings.notFound("Promotion").message, 404);
   }
 
+  // Convert datetime fields to MySQL format before updating
+  const preparedData = preparePromotionDataForDB(data);
+  console.log("[SERVICE] Prepared data for DB:", preparedData);
+
   console.log("[SERVICE] Calling updatePromotionRepo...");
-  return updatePromotionRepo(id, data);
+  return updatePromotionRepo(id, preparedData);
 };
 
 export const togglePromotionStatusService = async (id: number) => {
