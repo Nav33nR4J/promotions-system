@@ -1,5 +1,7 @@
 import React, { memo, useCallback, useEffect, useRef } from "react";
-import { TouchableOpacity, StyleSheet, Animated } from "react-native";
+import { TouchableOpacity, Animated } from "react-native";
+import { componentStyles, getToggleSwitchThemeStyles } from "../../theme/styles";
+import { useTheme } from "../../theme/ThemeProvider";
 
 interface ToggleSwitchProps {
   value: boolean;
@@ -12,6 +14,12 @@ const ToggleSwitchComponent: React.FC<ToggleSwitchProps> = ({
   onValueChange,
   disabled = false,
 }) => {
+  const { theme } = useTheme();
+  const themeStyles = getToggleSwitchThemeStyles(theme);
+  
+  // Ensure disabled is always a boolean
+  const isDisabled = Boolean(disabled);
+  
   const translateX = useRef(new Animated.Value(value ? 22 : 0)).current;
   const backgroundColor = useRef(
     new Animated.Value(value ? 1 : 0)
@@ -69,7 +77,7 @@ const ToggleSwitchComponent: React.FC<ToggleSwitchProps> = ({
   }, [value, translateX, backgroundColor, stopAllAnimations]);
 
   const handlePress = useCallback(() => {
-    if (!disabled) {
+    if (!isDisabled) {
       // Stop any existing scale animation before starting a new one
       if (scaleAnimationRef.current) {
         scaleAnimationRef.current.stop();
@@ -104,23 +112,24 @@ const ToggleSwitchComponent: React.FC<ToggleSwitchProps> = ({
     <TouchableOpacity
       activeOpacity={1}
       onPress={handlePress}
-      disabled={disabled}
+      disabled={isDisabled}
     >
       <Animated.View
         style={[
-          styles.container,
+          componentStyles.toggleSwitch.container,
           {
             backgroundColor: backgroundColorInterpolation,
-            opacity: disabled ? 0.5 : 1,
+            opacity: isDisabled ? 0.5 : 1,
             transform: [{ scale }],
           },
         ]}
       >
         <Animated.View
           style={[
-            styles.thumb,
+            componentStyles.toggleSwitch.thumb,
             {
               transform: [{ translateX }],
+              backgroundColor: themeStyles.thumb.backgroundColor,
             },
           ]}
         />
@@ -130,24 +139,3 @@ const ToggleSwitchComponent: React.FC<ToggleSwitchProps> = ({
 };
 
 export const ToggleSwitch = memo(ToggleSwitchComponent);
-
-const styles = StyleSheet.create({
-  container: {
-    width: 52,
-    height: 30,
-    borderRadius: 15,
-    padding: 2,
-    justifyContent: "center",
-  },
-  thumb: {
-    width: 26,
-    height: 26,
-    borderRadius: 13,
-    backgroundColor: "#FFFFFF",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.5,
-    elevation: 4,
-  },
-});

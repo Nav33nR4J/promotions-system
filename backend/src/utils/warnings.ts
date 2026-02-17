@@ -25,13 +25,25 @@ export const Warnings = {
       code: "VALIDATION_ERROR",
       message: "Promo code is required"
     }),
+    promoCodeEmpty: () => ({
+      code: "VALIDATION_ERROR",
+      message: "Promo code cannot be empty"
+    }),
+    promoCodeInvalid: () => ({
+      code: "VALIDATION_ERROR",
+      message: "Promo code can only contain letters, numbers, underscores, and hyphens"
+    }),
     titleRequired: () => ({
       code: "VALIDATION_ERROR",
       message: "Title is required"
     }),
+    titleEmpty: () => ({
+      code: "VALIDATION_ERROR",
+      message: "Title cannot be empty"
+    }),
     invalidDiscountType: () => ({
       code: "VALIDATION_ERROR",
-      message: "Invalid discount type. Must be PERCENTAGE or FIXED"
+      message: "Invalid discount type. Must be PERCENTAGE, FIXED, or CUSTOM"
     }),
     valueMustBePositive: () => ({
       code: "VALIDATION_ERROR",
@@ -52,7 +64,49 @@ export const Warnings = {
     invalidId: () => ({
       code: "VALIDATION_ERROR",
       message: "Invalid ID"
-    })
+    }),
+    // CUSTOM type validations
+    customItemsRequired: () => ({
+      code: "VALIDATION_ERROR",
+      message: "Custom items are required for CUSTOM promotion type"
+    }),
+    customItemsEmpty: () => ({
+      code: "VALIDATION_ERROR",
+      message: "Custom items must be a non-empty array"
+    }),
+    itemIdRequired: (index: number) => ({
+      code: "VALIDATION_ERROR",
+      message: `Item ID required for custom item ${index + 1}`
+    }),
+    invalidItemDiscountType: (index: number) => ({
+      code: "VALIDATION_ERROR",
+      message: `Invalid discount type for item ${index + 1}`
+    }),
+    itemDiscountValueRequired: (index: number) => ({
+      code: "VALIDATION_ERROR",
+      message: `Discount value must be greater than 0 for item ${index + 1}`
+    }),
+    // Combo validations
+    comboMinItems: (index: number) => ({
+      code: "VALIDATION_ERROR",
+      message: `Combo ${index + 1} must have at least 2 items`
+    }),
+    invalidComboDiscountType: (index: number) => ({
+      code: "VALIDATION_ERROR",
+      message: `Invalid discount type for combo ${index + 1}`
+    }),
+    comboDiscountValueRequired: (index: number) => ({
+      code: "VALIDATION_ERROR",
+      message: `Discount value must be greater than 0 for combo ${index + 1}`
+    }),
+    selectAtLeastOneItem: () => ({
+      code: "VALIDATION_ERROR",
+      message: "Select at least one menu item for CUSTOM promotion"
+    }),
+    enterValidDiscount: (itemName: string) => ({
+      code: "VALIDATION_ERROR",
+      message: `Enter valid discount for ${itemName}`
+    }),
   },
 
   // Promotion specific warnings

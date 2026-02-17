@@ -1,8 +1,8 @@
 import React from "react";
-import { TouchableOpacity, Text, StyleSheet, ActivityIndicator } from "react-native";
+import { TouchableOpacity, Text, ActivityIndicator } from "react-native";
 import LinearGradient from "react-native-linear-gradient";
 import { useTheme } from "../../theme/ThemeProvider";
-import { sharedStyles, componentStyles } from "../../theme/styles";
+import { componentStyles } from "../../theme/styles";
 
 interface ButtonProps {
   title: string;
@@ -30,14 +30,14 @@ export const Button = ({ title, onPress, disabled, loading, style }: ButtonProps
     >
       <TouchableOpacity
         onPress={onPress}
-        style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+        style={componentStyles.button.inner}
         disabled={disabled || loading}
         activeOpacity={0.8}
       >
         {loading ? (
           <ActivityIndicator color="#fff" />
         ) : (
-          <Text style={{ color: "#fff", fontWeight: "bold", fontSize: 16 }}>
+          <Text style={componentStyles.button.text}>
             {title}
           </Text>
         )}

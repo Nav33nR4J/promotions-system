@@ -348,6 +348,46 @@ const componentStylesRaw = {
     },
   },
 
+  // --- Checkbox ---
+  checkbox: {
+    container: {
+      borderWidth: 2,
+      borderRadius: 4,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    checkmark: {
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    checkmarkText: {
+      color: "#FFFFFF",
+      fontWeight: "bold",
+    },
+  },
+
+  // --- ToggleSwitch ---
+  toggleSwitch: {
+    container: {
+      width: 52,
+      height: 30,
+      borderRadius: 15,
+      padding: 2,
+      justifyContent: "center",
+    },
+    thumb: {
+      width: 26,
+      height: 26,
+      borderRadius: 13,
+      backgroundColor: "#FFFFFF",
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.25,
+      shadowRadius: 3.5,
+      elevation: 4,
+    },
+  },
+
   // --- PromotionCard ---
   promotionCard: {
     cardContainer: {
@@ -677,6 +717,27 @@ const componentStylesRaw = {
       marginBottom: 12,
       marginTop: 8,
     },
+    // Combo creation modal specific
+    comboDiscountSection: {
+      marginTop: 16,
+    },
+    comboDiscountLabel: {
+      marginBottom: 8,
+    },
+    comboDiscountRow: {
+      flexDirection: "row",
+      marginBottom: 12,
+    },
+    comboDiscountInputContainer: {
+      marginBottom: 12,
+    },
+    comboModalButtonsRow: {
+      flexDirection: "row",
+      marginTop: 8,
+    },
+    comboModalButton: {
+      flex: 1,
+    },
   },
 
   // --- PromotionList ---
@@ -741,28 +802,6 @@ const componentStylesRaw = {
       color: "#666",
       textAlign: "center",
       paddingHorizontal: 40,
-    },
-  },
-
-  // --- ToggleSwitch ---
-  toggleSwitch: {
-    container: {
-      width: 52,
-      height: 30,
-      borderRadius: 15,
-      padding: 2,
-      justifyContent: "center",
-    },
-    thumb: {
-      width: 26,
-      height: 26,
-      borderRadius: 13,
-      backgroundColor: "#FFFFFF",
-      shadowColor: "#000",
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.25,
-      shadowRadius: 3.5,
-      elevation: 4,
     },
   },
 };
@@ -839,6 +878,96 @@ const appStylesRaw = {
     },
     createButton: {
       backgroundColor: "#7C3AED",
+    },
+    // Floating validate button
+    floatingButton: {
+      position: "absolute",
+      bottom: 90,
+      right: 20,
+      width: 56,
+      height: 56,
+      borderRadius: 28,
+      justifyContent: "center",
+      alignItems: "center",
+      elevation: 5,
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.25,
+      shadowRadius: 4,
+    },
+    floatingButtonText: {
+      color: "#FFFFFF",
+      fontSize: 24,
+      fontWeight: "bold",
+    },
+    // Validation modal styles
+    modalOverlay: {
+      flex: 1,
+      backgroundColor: "rgba(0,0,0,0.5)",
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    modalContent: {
+      width: "85%",
+      padding: 24,
+      borderRadius: 16,
+      alignItems: "center",
+    },
+    modalTitle: {
+      fontSize: 20,
+      fontWeight: "bold",
+      marginBottom: 20,
+    },
+    validateButton: {
+      width: "100%",
+      paddingVertical: 14,
+      borderRadius: 8,
+      alignItems: "center",
+      marginBottom: 16,
+    },
+    validateButtonDisabled: {
+      opacity: 0.6,
+    },
+    validateButtonText: {
+      color: "#FFFFFF",
+      fontSize: 16,
+      fontWeight: "600",
+    },
+    statusContainer: {
+      width: "100%",
+      padding: 14,
+      borderRadius: 8,
+      alignItems: "center",
+      marginBottom: 16,
+    },
+    statusEnabled: {
+      backgroundColor: "#E8F5E9",
+    },
+    statusDisabled: {
+      backgroundColor: "#FFF3E0",
+    },
+    statusInvalid: {
+      backgroundColor: "#FFEBEE",
+    },
+    statusText: {
+      fontSize: 16,
+      fontWeight: "600",
+    },
+    statusTextEnabled: {
+      color: "#2E7D32",
+    },
+    statusTextDisabled: {
+      color: "#E65100",
+    },
+    statusTextInvalid: {
+      color: "#C62828",
+    },
+    closeButton: {
+      paddingVertical: 10,
+    },
+    closeButtonText: {
+      fontSize: 16,
+      fontWeight: "600",
     },
   },
 
@@ -937,10 +1066,14 @@ export const getPromotionCardThemeStyles = (
     dateValue: {
       color: "#FFFFFF",
     },
+    editButton: {
+      backgroundColor: "rgba(255, 255, 255, 0.95)",
+    },
     editButtonText: {
       color: theme.primary,
     },
     deleteButton: {
+      backgroundColor: "rgba(255, 255, 255, 0.2)",
       borderColor: "rgba(255, 255, 255, 0.45)",
     },
     deleteButtonText: {
@@ -1038,6 +1171,74 @@ export const getPromotionFormThemeStyles = (theme: Theme) => {
     sectionTitle: {
       color: theme.text,
     },
+    // Combo creation modal specific
+    comboDiscountLabel: {
+      marginBottom: 8,
+    },
+    comboDiscountRow: {
+      marginBottom: 12,
+    },
+    comboDiscountInputContainer: {
+      marginBottom: 12,
+    },
+    comboModalButtonsRow: {
+      marginTop: 8,
+    },
+    comboModalButton: {
+      flex: 1,
+    },
+  };
+};
+
+// Theme-aware getter for Checkbox
+export const getCheckboxThemeStyles = (theme: Theme, isDark: boolean) => {
+  return {
+    container: {
+      borderColor: isDark ? theme.border : "#666",
+    },
+    checkmarkText: {
+      color: "#FFFFFF",
+    },
+  };
+};
+
+// Theme-aware getter for ToggleSwitch
+export const getToggleSwitchThemeStyles = (theme: Theme) => {
+  return {
+    thumb: {
+      backgroundColor: "#FFFFFF",
+    },
+  };
+};
+
+// Theme-aware getter for HomeScreen modal
+export const getHomeScreenModalThemeStyles = (theme: Theme, isDark: boolean) => {
+  return {
+    container: {
+      backgroundColor: isDark ? theme.background : "#FFFFFF",
+    },
+    modalContent: {
+      backgroundColor: isDark ? theme.card : "#FFFFFF",
+    },
+    modalTitle: {
+      color: theme.text,
+    },
+    closeButtonText: {
+      color: theme.primary,
+    },
+    themeButton: {
+      backgroundColor: isDark ? "rgba(255,255,255,0.16)" : "rgba(255,255,255,0.24)",
+      borderColor: "rgba(255,255,255,0.35)",
+    },
+    floatingButton: {
+      backgroundColor: theme.primary,
+    },
+    validateButton: {
+      backgroundColor: theme.primary,
+    },
+    input: {
+      marginBottom: 16,
+    },
   };
 };
 
@@ -1050,3 +1251,4 @@ export default {
   ...componentStyles,
   ...appStyles,
 };
+

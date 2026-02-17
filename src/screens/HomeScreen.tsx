@@ -1,12 +1,12 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { View, StatusBar, TouchableOpacity, Animated, Modal, StyleSheet, Alert } from "react-native";
+import { View, StatusBar, TouchableOpacity, Animated, Modal, Alert } from "react-native";
 import LinearGradient from "react-native-linear-gradient";
 import { PromotionList } from "../components/organisms/PromotionList";
 import { Button } from "../components/atoms/Button";
 import { Text } from "../components/atoms/Text";
 import { Input } from "../components/atoms/Input";
 import { useTheme } from "../theme/ThemeProvider";
-import { appStyles } from "../theme/styles";
+import { appStyles, getHomeScreenModalThemeStyles } from "../theme/styles";
 import { Promotion } from "../redux/slices/promotionsSlice";
 import { api } from "../utils/api";
 
@@ -15,6 +15,7 @@ type ValidationStatus = "IDLE" | "LOADING" | "ENABLED" | "DISABLED" | "INVALID";
 export const HomeScreen = ({ navigation }: any) => {
   const { toggleTheme, isDark, theme } = useTheme();
   const themeIconAnim = useRef(new Animated.Value(isDark ? 1 : 0)).current;
+  const modalThemeStyles = getHomeScreenModalThemeStyles(theme, isDark);
 
   // Validation modal state
   const [showValidateModal, setShowValidateModal] = useState(false);
@@ -54,13 +55,20 @@ export const HomeScreen = ({ navigation }: any) => {
     } catch (error: any) {
       console.log("Validation error caught:", error);
       const status = error.response?.status;
-      const message = error.response?.data?.message || error.message;
+      const message = error.response?.data?.message || error.message || "";
       
       console.log("Error status:", status, "message:", message);
       
       if (status === 404) {
         setValidationStatus("INVALID");
-      } else if (message && (message.includes("inactive") || message.includes("expired") || message.includes("not started") || message.includes("usage limit"))) {
+      } else if (
+        message &&
+        typeof message === "string" &&
+        (message.toLowerCase().includes("inactive") || 
+         message.toLowerCase().includes("expired") || 
+         message.toLowerCase().includes("not started") || 
+         message.toLowerCase().includes("usage limit"))
+      ) {
         setValidationStatus("DISABLED");
       } else {
         setValidationStatus("INVALID");
@@ -77,7 +85,7 @@ export const HomeScreen = ({ navigation }: any) => {
   };
 
   return (
-    <View style={[appStyles.homeScreen.container, { backgroundColor: isDark ? theme.background : "#FFFFFF", paddingTop: 0, marginTop: 0 }]}>
+    <View style={[appStyles.homeScreen.container, modalThemeStyles.container]}>
       <StatusBar barStyle={isDark ? "light-content" : "dark-content"} />
       
       {/* Header */}
@@ -85,7 +93,7 @@ export const HomeScreen = ({ navigation }: any) => {
         colors={[theme.gradientStart, theme.gradientEnd]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 0 }}
-        style={[appStyles.homeScreen.headerGradient, { marginTop: 0 }]}
+        style={appStyles.homeScreen.headerGradient}
       >
         <View style={appStyles.homeScreen.headerContent}>
           <View>
@@ -95,13 +103,7 @@ export const HomeScreen = ({ navigation }: any) => {
           <TouchableOpacity
             activeOpacity={0.85}
             onPress={toggleTheme}
-            style={[
-              appStyles.homeScreen.themeButton,
-              {
-                backgroundColor: isDark ? "rgba(255,255,255,0.16)" : "rgba(255,255,255,0.24)",
-                borderColor: "rgba(255,255,255,0.35)",
-              },
-            ]}
+            style={[appStyles.homeScreen.themeButton, modalThemeStyles.themeButton]}
             accessibilityRole="button"
             accessibilityLabel="Toggle theme"
           >
@@ -166,14 +168,11 @@ export const HomeScreen = ({ navigation }: any) => {
 
       {/* Floating Validate Button */}
       <TouchableOpacity
-        style={[
-          styles.floatingButton,
-          { backgroundColor: theme.primary },
-        ]}
+        style={[appStyles.homeScreen.floatingButton, modalThemeStyles.floatingButton]}
         onPress={() => setShowValidateModal(true)}
         activeOpacity={0.8}
       >
-        <Text style={styles.floatingButtonText}>✓</Text>
+        <Text style={appStyles.homeScreen.floatingButtonText}>✓</Text>
       </TouchableOpacity>
 
       {/* Validation Modal */}
@@ -183,9 +182,9 @@ export const HomeScreen = ({ navigation }: any) => {
         animationType="fade"
         onRequestClose={closeValidateModal}
       >
-        <View style={styles.modalOverlay}>
-          <View style={[styles.modalContent, { backgroundColor: isDark ? theme.card : "#FFFFFF" }]}>
-            <Text style={[styles.modalTitle, { color: theme.text }]}>Validate Promo Code</Text>
+        <View style={appStyles.homeScreen.modalOverlay}>
+          <View style={[appStyles.homeScreen.modalContent, modalThemeStyles.modalContent]}>
+            <Text style={[appStyles.homeScreen.modalTitle, { color: modalThemeStyles.modalTitle.color }]}>Validate Promo Code</Text>
             
             <Input
               placeholder="Enter promo code"
@@ -195,19 +194,19 @@ export const HomeScreen = ({ navigation }: any) => {
                 setValidationStatus("IDLE");
               }}
               autoCapitalize="characters"
-              style={{ marginBottom: 16 }}
+              style={modalThemeStyles.input}
             />
             
             <TouchableOpacity
               style={[
-                styles.validateButton,
-                { backgroundColor: theme.primary },
-                (validating || !validateCode.trim()) && styles.validateButtonDisabled,
+                appStyles.homeScreen.validateButton,
+                modalThemeStyles.validateButton,
+                (validating || !validateCode.trim()) && appStyles.homeScreen.validateButtonDisabled,
               ]}
               onPress={handleValidate}
               disabled={validating || !validateCode.trim()}
             >
-              <Text style={styles.validateButtonText}>
+              <Text style={appStyles.homeScreen.validateButtonText}>
                 {validating ? "Validating..." : "Validate"}
               </Text>
             </TouchableOpacity>
@@ -216,18 +215,18 @@ export const HomeScreen = ({ navigation }: any) => {
             {validationStatus !== "IDLE" && validationStatus !== "LOADING" && (
               <View
                 style={[
-                  styles.statusContainer,
-                  validationStatus === "ENABLED" && styles.statusEnabled,
-                  validationStatus === "DISABLED" && styles.statusDisabled,
-                  validationStatus === "INVALID" && styles.statusInvalid,
+                  appStyles.homeScreen.statusContainer,
+                  validationStatus === "ENABLED" && appStyles.homeScreen.statusEnabled,
+                  validationStatus === "DISABLED" && appStyles.homeScreen.statusDisabled,
+                  validationStatus === "INVALID" && appStyles.homeScreen.statusInvalid,
                 ]}
               >
                 <Text
                   style={[
-                    styles.statusText,
-                    validationStatus === "ENABLED" && styles.statusTextEnabled,
-                    validationStatus === "DISABLED" && styles.statusTextDisabled,
-                    validationStatus === "INVALID" && styles.statusTextInvalid,
+                    appStyles.homeScreen.statusText,
+                    validationStatus === "ENABLED" && appStyles.homeScreen.statusTextEnabled,
+                    validationStatus === "DISABLED" && appStyles.homeScreen.statusTextDisabled,
+                    validationStatus === "INVALID" && appStyles.homeScreen.statusTextInvalid,
                   ]}
                 >
                   {validationStatus === "ENABLED" && "✓ ENABLED"}
@@ -238,10 +237,10 @@ export const HomeScreen = ({ navigation }: any) => {
             )}
             
             <TouchableOpacity
-              style={styles.closeButton}
+              style={appStyles.homeScreen.closeButton}
               onPress={closeValidateModal}
             >
-              <Text style={[styles.closeButtonText, { color: theme.primary }]}>Close</Text>
+              <Text style={[appStyles.homeScreen.closeButtonText, { color: modalThemeStyles.closeButtonText.color }]}>Close</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -249,94 +248,3 @@ export const HomeScreen = ({ navigation }: any) => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  floatingButton: {
-    position: "absolute",
-    bottom: 90,
-    right: 20,
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    justifyContent: "center",
-    alignItems: "center",
-    elevation: 5,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-  },
-  floatingButtonText: {
-    color: "#FFFFFF",
-    fontSize: 24,
-    fontWeight: "bold",
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.5)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  modalContent: {
-    width: "85%",
-    padding: 24,
-    borderRadius: 16,
-    alignItems: "center",
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 20,
-  },
-  validateButton: {
-    width: "100%",
-    paddingVertical: 14,
-    borderRadius: 8,
-    alignItems: "center",
-    marginBottom: 16,
-  },
-  validateButtonDisabled: {
-    opacity: 0.6,
-  },
-  validateButtonText: {
-    color: "#FFFFFF",
-    fontSize: 16,
-    fontWeight: "600",
-  },
-  statusContainer: {
-    width: "100%",
-    padding: 14,
-    borderRadius: 8,
-    alignItems: "center",
-    marginBottom: 16,
-  },
-  statusEnabled: {
-    backgroundColor: "#E8F5E9",
-  },
-  statusDisabled: {
-    backgroundColor: "#FFF3E0",
-  },
-  statusInvalid: {
-    backgroundColor: "#FFEBEE",
-  },
-  statusText: {
-    fontSize: 16,
-    fontWeight: "600",
-  },
-  statusTextEnabled: {
-    color: "#2E7D32",
-  },
-  statusTextDisabled: {
-    color: "#E65100",
-  },
-  statusTextInvalid: {
-    color: "#C62828",
-  },
-  closeButton: {
-    paddingVertical: 10,
-  },
-  closeButtonText: {
-    fontSize: 16,
-    fontWeight: "600",
-  },
-});

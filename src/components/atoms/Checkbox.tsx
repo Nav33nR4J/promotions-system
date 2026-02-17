@@ -1,5 +1,7 @@
 import React, { memo, useCallback } from "react";
-import { TouchableOpacity, View, StyleSheet, Text, ViewStyle, StyleProp } from "react-native";
+import { TouchableOpacity, View, Text, ViewStyle, StyleProp } from "react-native";
+import { componentStyles, getCheckboxThemeStyles } from "../../theme/styles";
+import { useTheme } from "../../theme/ThemeProvider";
 
 interface CheckboxProps {
   value: boolean;
@@ -18,6 +20,9 @@ const CheckboxComponent: React.FC<CheckboxProps> = ({
   size = 24,
   style,
 }: CheckboxProps) => {
+  const { theme, isDark } = useTheme();
+  const themeStyles = getCheckboxThemeStyles(theme, isDark);
+
   const handlePress = useCallback(() => {
     if (!disabled) {
       onValueChange(!value);
@@ -30,20 +35,20 @@ const CheckboxComponent: React.FC<CheckboxProps> = ({
       disabled={disabled}
       activeOpacity={0.7}
       style={[
-        styles.container,
+        componentStyles.checkbox.container,
         style,
         {
           width: size,
           height: size,
-          borderColor: disabled ? "#ccc" : value ? color : "#666",
+          borderColor: disabled ? "#ccc" : value ? color : themeStyles.container.borderColor,
           backgroundColor: value ? color : "transparent",
           opacity: disabled ? 0.5 : 1,
         },
       ]}
     >
       {value && (
-        <View style={styles.checkmark}>
-          <Text style={[styles.checkmarkText, { fontSize: size * 0.7 }]}>✓</Text>
+        <View style={componentStyles.checkbox.checkmark}>
+          <Text style={[componentStyles.checkbox.checkmarkText, { fontSize: size * 0.7 }]}>✓</Text>
         </View>
       )}
     </TouchableOpacity>
@@ -51,21 +56,4 @@ const CheckboxComponent: React.FC<CheckboxProps> = ({
 };
 
 export const Checkbox = memo(CheckboxComponent);
-
-const styles = StyleSheet.create({
-  container: {
-    borderWidth: 2,
-    borderRadius: 4,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  checkmark: {
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  checkmarkText: {
-    color: "#FFFFFF",
-    fontWeight: "bold",
-  },
-});
 

@@ -1,6 +1,6 @@
 
 import React, { useState, useMemo } from "react";
-import { View, Alert, TouchableOpacity, Modal, ScrollView, StyleSheet } from "react-native";
+import { View, Alert, TouchableOpacity, Modal, ScrollView } from "react-native";
 import { Checkbox } from "../atoms/Checkbox";
 import { Input } from "../atoms/Input";
 import { Button } from "../atoms/Button";
@@ -357,222 +357,37 @@ export const PromotionForm = ({ promotion, onSuccess }: PromotionFormProps) => {
     }
   };
 
-  const styles = StyleSheet.create({
-    container: { padding: 16 },
-    fieldContainer: { marginBottom: 16 },
-    label: { 
-      fontSize: 14, 
-      fontWeight: "600", 
-      marginBottom: 8,
-      color: theme.text,
-    },
-    typeButton: {
-      height: 50,
-      justifyContent: "center",
-      paddingHorizontal: 12,
-      backgroundColor: theme.card,
-      borderRadius: 8,
-      borderWidth: 1,
-      borderColor: theme.text + "30",
-    },
-    typeButtonText: {
-      color: theme.text,
-      fontSize: 16,
-    },
-    row: { flexDirection: "row", justifyContent: "space-between" },
-    halfField: { flex: 1, marginRight: 8 },
-    modalContainer: {
-      flex: 1,
-      justifyContent: "center",
-      alignItems: "center",
-      backgroundColor: "rgba(0,0,0,0.5)",
-    },
-    modalContent: {
-      backgroundColor: theme.background,
-      padding: 20,
-      borderRadius: 12,
-      minWidth: 280,
-      maxHeight: "80%",
-      width: "90%",
-    },
-    modalScroll: {
-      maxHeight: 400,
-    },
-    modalTitle: {
-      fontSize: 18,
-      fontWeight: "bold",
-      marginBottom: 16,
-      color: theme.text,
-      textAlign: "center",
-    },
-    modalOption: {
-      paddingVertical: 14,
-      borderBottomWidth: 1,
-      borderBottomColor: theme.text + "20",
-    },
-    modalOptionText: {
-      fontSize: 16,
-      color: theme.text,
-      textAlign: "center",
-    },
-    modalCancel: {
-      marginTop: 12,
-      paddingVertical: 14,
-    },
-    modalCancelText: {
-      fontSize: 16,
-      color: theme.primary,
-      textAlign: "center",
-      fontWeight: "600",
-    },
-    dateButton: {
-      height: 50,
-      justifyContent: "center",
-      paddingHorizontal: 12,
-      backgroundColor: theme.card,
-      borderRadius: 8,
-      borderWidth: 1,
-      borderColor: theme.text + "30",
-    },
-    dateButtonText: {
-      color: form.start_at ? theme.text : theme.text + "60",
-      fontSize: 16,
-    },
-    // Custom type styles
-    menuItemRow: {
-      flexDirection: "row",
-      alignItems: "center",
-      paddingVertical: 10,
-      paddingHorizontal: 8,
-      backgroundColor: theme.card,
-      borderRadius: 8,
-      marginBottom: 8,
-    },
-    menuItemCheckbox: {
-      marginRight: 12,
-    },
-    menuItemInfo: {
-      flex: 1,
-    },
-    menuItemName: {
-      fontSize: 14,
-      fontWeight: "600",
-      color: theme.text,
-    },
-    menuItemPrice: {
-      fontSize: 12,
-      color: theme.text + "80",
-    },
-    categoryTitle: {
-      fontSize: 16,
-      fontWeight: "bold",
-      color: theme.primary,
-      marginTop: 16,
-      marginBottom: 8,
-    },
-    selectedItemContainer: {
-      backgroundColor: theme.card,
-      borderRadius: 8,
-      padding: 12,
-      marginBottom: 8,
-    },
-    selectedItemHeader: {
-      flexDirection: "row",
-      justifyContent: "space-between",
-      alignItems: "center",
-      marginBottom: 8,
-    },
-    selectedItemName: {
-      fontSize: 14,
-      fontWeight: "600",
-      color: theme.text,
-    },
-    selectedItemDiscount: {
-      flexDirection: "row",
-      alignItems: "center",
-    },
-    discountTypeButton: {
-      paddingHorizontal: 12,
-      paddingVertical: 6,
-      borderRadius: 4,
-      marginRight: 8,
-      backgroundColor: theme.text + "10",
-    },
-    discountTypeButtonActive: {
-      backgroundColor: theme.primary,
-    },
-    discountTypeText: {
-      fontSize: 12,
-      color: theme.text,
-    },
-    discountInput: {
-      flex: 1,
-      height: 36,
-      backgroundColor: theme.background,
-      borderRadius: 4,
-      paddingHorizontal: 8,
-      color: theme.text,
-    },
-    comboContainer: {
-      backgroundColor: theme.card,
-      borderRadius: 8,
-      padding: 12,
-      marginBottom: 8,
-    },
-    comboHeader: {
-      flexDirection: "row",
-      justifyContent: "space-between",
-      alignItems: "center",
-      marginBottom: 8,
-    },
-    comboItems: {
-      fontSize: 12,
-      color: theme.text + "80",
-      marginBottom: 4,
-    },
-    comboDiscount: {
-      fontSize: 14,
-      fontWeight: "600",
-      color: theme.primary,
-    },
-    comboRemoveButton: {
-      padding: 4,
-    },
-    comboRemoveText: {
-      color: "red",
-      fontSize: 14,
-    },
-    addComboButton: {
-      padding: 12,
-      borderRadius: 8,
-      borderWidth: 1,
-      borderColor: theme.primary,
-      borderStyle: "dashed",
-      alignItems: "center",
-      marginBottom: 16,
-    },
-    addComboText: {
-      color: theme.primary,
-      fontWeight: "600",
-    },
-    comboItemRow: {
-      flexDirection: "row",
-      alignItems: "center",
-      paddingVertical: 8,
-    },
-    comboItemText: {
-      fontSize: 14,
-      color: theme.text,
-      marginLeft: 8,
-    },
-    sectionTitle: {
-      fontSize: 16,
-      fontWeight: "bold",
-      color: theme.text,
-      marginBottom: 12,
-      marginTop: 8,
-    },
-  });
+  const styles = {
+    ...localstyles,
+    ...formThemeStyles,
+    label: { ...localstyles.label, ...formThemeStyles.label },
+    typeButton: { ...localstyles.typeButton, ...formThemeStyles.typeButton },
+    typeButtonText: { ...localstyles.typeButtonText, ...formThemeStyles.typeButtonText },
+    dateButton: { ...localstyles.dateButton, ...formThemeStyles.dateButton },
+    dateButtonText: { ...localstyles.dateButtonText, ...formThemeStyles.dateButtonText },
+    modalContainer: { ...localstyles.modalContainer, ...formThemeStyles.modalContainer },
+    modalContent: { ...localstyles.modalContent, ...formThemeStyles.modalContent },
+    modalTitle: { ...localstyles.modalTitle, ...formThemeStyles.modalTitle },
+    modalOption: { ...localstyles.modalOption, ...formThemeStyles.modalOption },
+    modalOptionText: { ...localstyles.modalOptionText, ...formThemeStyles.modalOptionText },
+    modalCancelText: { ...localstyles.modalCancelText, ...formThemeStyles.modalCancelText },
+    menuItemRow: { ...localstyles.menuItemRow, ...formThemeStyles.menuItemRow },
+    menuItemName: { ...localstyles.menuItemName, ...formThemeStyles.menuItemName },
+    menuItemPrice: { ...localstyles.menuItemPrice, ...formThemeStyles.menuItemPrice },
+    categoryTitle: { ...localstyles.categoryTitle, ...formThemeStyles.categoryTitle },
+    selectedItemContainer: { ...localstyles.selectedItemContainer, ...formThemeStyles.selectedItemContainer },
+    selectedItemName: { ...localstyles.selectedItemName, ...formThemeStyles.selectedItemName },
+    discountTypeButton: { ...localstyles.discountTypeButton, ...formThemeStyles.discountTypeButton },
+    discountTypeText: { ...localstyles.discountTypeText, ...formThemeStyles.discountTypeText },
+    discountInput: { ...localstyles.discountInput, ...formThemeStyles.discountInput },
+    comboContainer: { ...localstyles.comboContainer, ...formThemeStyles.comboContainer },
+    comboItems: { ...localstyles.comboItems, ...formThemeStyles.comboItems },
+    comboDiscount: { ...localstyles.comboDiscount, ...formThemeStyles.comboDiscount },
+    addComboButton: { ...localstyles.addComboButton, ...formThemeStyles.addComboButton },
+    addComboText: { ...localstyles.addComboText, ...formThemeStyles.addComboText },
+    comboItemText: { ...localstyles.comboItemText, ...formThemeStyles.comboItemText },
+    sectionTitle: { ...localstyles.sectionTitle, ...formThemeStyles.sectionTitle },
+  } as const;
 
   return (
     <View style={styles.container}>
