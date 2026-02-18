@@ -1,5 +1,5 @@
-import { ApiError } from "../utils/ApiError";
 import { Promotion } from "../types/promotions.types";
+import { ApiError } from "../utils/ApiError";
 import { Warnings } from "../utils/warnings";
 
 export const validateCreatePromotion = (data: Promotion) => {
@@ -11,12 +11,12 @@ export const validateCreatePromotion = (data: Promotion) => {
   
   const invalidDiscountType = Warnings.validation.invalidDiscountType();
   if (!data.type) throw new ApiError(invalidDiscountType.message, 400);
-  if (!["PERCENTAGE", "FIXED", "CUSTOM"].includes(data.type)) {
+  if (!["PERCENTAGE", "FIXED", "CUSTOM_ITEMS"].includes(data.type)) {
     throw new ApiError(invalidDiscountType.message, 400);
   }
   
-  // Validate CUSTOM type specific fields
-  if (data.type === "CUSTOM") {
+  // Validate CUSTOM_ITEMS type specific fields
+  if (data.type === "CUSTOM_ITEMS") {
     const customItemsRequired = Warnings.validation.customItemsRequired();
     if (!data.custom_items || !Array.isArray(data.custom_items) || data.custom_items.length === 0) {
       throw new ApiError(customItemsRequired.message, 400);
@@ -75,12 +75,12 @@ export const validateCreatePromotion = (data: Promotion) => {
 
 export const validateUpdatePromotion = (data: Partial<Promotion>) => {
   const invalidDiscountType = Warnings.validation.invalidDiscountType();
-  if (data.type && !["PERCENTAGE", "FIXED", "CUSTOM"].includes(data.type)) {
+  if (data.type && !["PERCENTAGE", "FIXED", "CUSTOM_ITEMS"].includes(data.type)) {
     throw new ApiError(invalidDiscountType.message, 400);
   }
   
-  // Validate CUSTOM type specific fields
-  if (data.type === "CUSTOM" || (data.custom_items !== undefined)) {
+  // Validate CUSTOM_ITEMS type specific fields
+  if (data.type === "CUSTOM_ITEMS" || (data.custom_items !== undefined)) {
     const customItems = data.custom_items;
     if (customItems !== undefined) {
       const customItemsEmpty = Warnings.validation.customItemsEmpty();
@@ -122,9 +122,9 @@ export const validateUpdatePromotion = (data: Partial<Promotion>) => {
     });
   }
   
-  // Only validate value for non-CUSTOM types
-  // For CUSTOM type, value should be 0 since discounts are per-item
-  if (data.value !== undefined && data.value <= 0 && data.type !== "CUSTOM") {
+  // Only validate value for non-CUSTOM_ITEMS types
+  // For CUSTOM_ITEMS type, value should be 0 since discounts are per-item
+  if (data.value !== undefined && data.value <= 0 && data.type !== "CUSTOM_ITEMS") {
     const valueMustBePositive = Warnings.validation.valueMustBePositive();
     throw new ApiError(valueMustBePositive.message, 400);
   }

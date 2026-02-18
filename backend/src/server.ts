@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import { app } from "./app";
-import { connectDB } from "./config/db";
+import { connectDB, initPromotionsTable } from "./config/db";
 import { ENV } from "./config/env";
 
 const PORT = Number(ENV.PORT);
@@ -16,6 +16,9 @@ const startServer = async () => {
     connectDB().then((dbConnected) => {
       if (dbConnected) {
         console.log("Database connected successfully");
+        // Initialize the promotions table
+        initPromotionsTable();
+        console.log("Promotions table initialized");
       } else {
         console.warn("Database unavailable - some features may not work");
       }

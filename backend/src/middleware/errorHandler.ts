@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import { NextFunction, Request, Response } from "express";
 import { ApiError } from "../utils/ApiError";
 
 export const errorHandler = (
@@ -19,6 +19,7 @@ export const errorHandler = (
   }
 
   const errorMessage = err.message.toLowerCase();
+
   if (
     errorMessage.includes("database operation timed out") ||
     errorMessage.includes("database unavailable") ||
@@ -28,6 +29,22 @@ export const errorHandler = (
     return res.status(503).json({
       success: false,
       message: "Database unavailable. Please try again shortly.",
+    });
+  }
+
+  // SQLite UNIQUE constraint violation → 409 Conflict
+  if (
+    errorMessage.includes("unique constraint failed") ||
+    errorMessage.includes("unique constraint") ||
+    errorMessage.includes("sqlite_constraint_unique")
+  ) {
+    // Extract the column name for a friendlier message
+    const match = err.message.match(/UNIQUE constraint failed: \w+\.(\w+)/i);
+    const field = match ? match[1] : "field";
+    const friendlyField = field === "promo_code" ? "Promo code" : field;
+    return res.status(409).json({
+      success: false,
+      message: `${friendlyField} already exists. Please use a different value.`,
     });
   }
 
